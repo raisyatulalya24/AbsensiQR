@@ -3,169 +3,85 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Smart Attendance — Sistem Absensi Perkuliahan QR</title>
+<title>Absensi — Rekayasa Perangkat Lunak II</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<!-- Library QR modern -->
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
 <style>
-/* =========================================================
-   DESIGN SYSTEM — TOKENS
-   ========================================================= */
 :root{
-  --navy-900:#0A1226;
-  --navy-800:#101A33;
-  --navy-700:#1B2A4E;
-  --navy-600:#243A6B;
-  --royal-500:#2B4EBA;
-  --royal-400:#4A6FE0;
-  --powder-100:#EEF4FF;
-  --powder-200:#D6E4FF;
-  --powder-300:#B8CCF5;
-  --gold-500:#D4AF6A;
-  --gold-400:#E4C889;
-  --off-white:#F8FAFF;
-  --white:#FFFFFF;
-  --ink:#0B1733;
-  --ink-soft:#3E4C6B;
-  --muted:#7A88A6;
-  --line:#E4EBF7;
-  --line-soft:#F0F4FB;
-  --green:#12B76A;
-  --green-soft:#E7F8F0;
-  --amber:#F79009;
-  --amber-soft:#FFF4E5;
-  --red:#E5484D;
-  --red-soft:#FEECEC;
-
-  --r-sm:12px; --r-md:16px; --r-lg:22px; --r-xl:28px; --r-2xl:36px; --r-pill:999px;
-
-  --sh-xs:0 1px 2px rgba(16,26,51,.04);
+  --navy-900:#0A1226;--navy-800:#101A33;--navy-700:#1B2A4E;
+  --royal-500:#2B4EBA;--royal-400:#4A6FE0;
+  --powder-100:#EEF4FF;--powder-200:#D6E4FF;--powder-300:#B8CCF5;
+  --gold-500:#D4AF6A;--gold-400:#E4C889;
+  --off-white:#F8FAFF;--ink:#0B1733;--ink-soft:#3E4C6B;--muted:#7A88A6;
+  --line:#E4EBF7;--line-soft:#F0F4FB;
+  --green:#12B76A;--green-soft:#E7F8F0;
+  --amber:#F79009;--amber-soft:#FFF4E5;
+  --red:#E5484D;--red-soft:#FEECEC;
+  --r-md:16px;--r-lg:22px;--r-xl:28px;--r-2xl:36px;--r-pill:999px;
   --sh-sm:0 4px 14px rgba(16,26,51,.06);
   --sh-md:0 12px 28px -6px rgba(16,26,51,.10);
   --sh-lg:0 28px 60px -18px rgba(16,26,51,.22);
-  --sh-glow:0 20px 60px -18px rgba(43,78,186,.45);
 }
-
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{height:100%}
-body{
-  font-family:'Inter',-apple-system,sans-serif;
-  color:var(--ink);background:var(--off-white);
-  -webkit-font-smoothing:antialiased;line-height:1.5;overflow-x:hidden;
-}
+body{font-family:'Inter',-apple-system,sans-serif;color:var(--ink);background:var(--off-white);-webkit-font-smoothing:antialiased;line-height:1.5;overflow-x:hidden}
 h1,h2,h3,h4,h5{font-family:'Poppins',sans-serif;letter-spacing:-.02em;font-weight:700}
 button,input,select{font-family:inherit}
 a{color:inherit;text-decoration:none}
-
-/* BACKGROUND DECOR */
 .bg-decor{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
 .bg-decor .blob{position:absolute;border-radius:50%;filter:blur(80px);opacity:.55}
 .bg-decor .blob.b1{width:520px;height:520px;background:#D6E4FF;top:-180px;left:-160px}
 .bg-decor .blob.b2{width:460px;height:460px;background:#F4E9CE;bottom:-200px;right:-140px;opacity:.5}
-.bg-decor .blob.b3{width:340px;height:340px;background:#C7D8FF;top:40%;right:20%;opacity:.35}
-.grid-lines{
-  position:fixed;inset:0;pointer-events:none;z-index:0;
-  background-image:
-    linear-gradient(rgba(43,78,186,.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(43,78,186,.05) 1px, transparent 1px);
-  background-size:64px 64px;
-  mask-image:radial-gradient(circle at 50% 30%, #000 0%, transparent 70%);
-  -webkit-mask-image:radial-gradient(circle at 50% 30%, #000 0%, transparent 70%);
-}
-
+.grid-lines{position:fixed;inset:0;pointer-events:none;z-index:0;background-image:linear-gradient(rgba(43,78,186,.05) 1px, transparent 1px),linear-gradient(90deg, rgba(43,78,186,.05) 1px, transparent 1px);background-size:64px 64px;mask-image:radial-gradient(circle at 50% 30%, #000 0%, transparent 70%);-webkit-mask-image:radial-gradient(circle at 50% 30%, #000 0%, transparent 70%)}
 #app{position:relative;z-index:1;min-height:100vh}
-.hidden{display:none!important}
-
-/* BUTTONS */
-.btn{
-  display:inline-flex;align-items:center;justify-content:center;gap:9px;
-  padding:13px 22px;border-radius:var(--r-pill);
-  font-weight:600;font-size:14px;border:none;cursor:pointer;
-  transition:all .25s cubic-bezier(.4,0,.2,1);white-space:nowrap;letter-spacing:-.01em;
-}
-.btn-primary{background:linear-gradient(135deg,var(--royal-500) 0%,var(--royal-400) 100%);color:#fff;box-shadow:0 10px 24px -8px rgba(43,78,186,.55)}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 16px 34px -10px rgba(43,78,186,.7)}
-.btn-navy{background:linear-gradient(135deg,var(--navy-800),var(--navy-700));color:#fff;box-shadow:0 10px 24px -10px rgba(16,26,51,.7)}
-.btn-navy:hover{transform:translateY(-2px)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:13px 22px;border-radius:var(--r-pill);font-weight:600;font-size:14px;border:none;cursor:pointer;transition:all .25s;white-space:nowrap}
+.btn-primary{background:linear-gradient(135deg,var(--royal-500),var(--royal-400));color:#fff;box-shadow:0 10px 24px -8px rgba(43,78,186,.55)}
+.btn-primary:hover{transform:translateY(-2px)}
 .btn-outline{background:#fff;color:var(--navy-800);border:1.5px solid var(--line)}
 .btn-outline:hover{border-color:var(--royal-400);color:var(--royal-500);background:var(--powder-100)}
-.btn-danger{background:linear-gradient(135deg,#E5484D,#C8332F);color:#fff;box-shadow:0 10px 24px -8px rgba(229,72,77,.5)}
-.btn-danger:hover{transform:translateY(-2px)}
-.btn-success{background:linear-gradient(135deg,#12B76A,#0E9B58);color:#fff;box-shadow:0 10px 24px -8px rgba(18,183,106,.5)}
-.btn-success:hover{transform:translateY(-2px)}
+.btn-navy{background:linear-gradient(135deg,var(--navy-800),var(--navy-700));color:#fff;box-shadow:0 10px 24px -10px rgba(16,26,51,.7)}
+.btn-navy:hover{transform:translateY(-2px)}
 .btn-block{width:100%}
 .btn-sm{padding:9px 16px;font-size:12.5px}
 .btn-lg{padding:16px 30px;font-size:15px}
-.btn:disabled{opacity:.5;cursor:not-allowed;transform:none!important;box-shadow:none}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none!important}
 
-/* NAVBAR */
-.navbar{
-  position:sticky;top:0;z-index:50;padding:18px 40px;
-  display:flex;justify-content:space-between;align-items:center;
-  background:rgba(248,250,255,.75);
-  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-  border-bottom:1px solid rgba(228,235,247,.6);
-}
+.navbar{position:sticky;top:0;z-index:50;padding:18px 40px;display:flex;justify-content:space-between;align-items:center;background:rgba(248,250,255,.75);backdrop-filter:blur(14px);border-bottom:1px solid rgba(228,235,247,.6)}
 .nav-logo{display:flex;align-items:center;gap:12px}
-.nav-logo .logo-mark{
-  width:42px;height:42px;border-radius:13px;
-  background:linear-gradient(135deg,var(--navy-800),var(--royal-500));
-  color:#fff;display:grid;place-items:center;font-size:17px;
-  box-shadow:0 10px 22px -8px rgba(43,78,186,.6);
-  position:relative;overflow:hidden;
-}
-.nav-logo .logo-mark::after{
-  content:'';position:absolute;inset:-40% -40% auto auto;
-  width:70%;height:70%;border-radius:50%;
-  background:radial-gradient(circle,rgba(212,175,106,.5),transparent 60%);
-}
-.nav-logo h1{font-size:16px;font-weight:700;color:var(--navy-800);letter-spacing:-.02em}
+.nav-logo .logo-mark{width:42px;height:42px;border-radius:13px;background:linear-gradient(135deg,var(--navy-800),var(--royal-500));color:#fff;display:grid;place-items:center;font-size:17px}
+.nav-logo h1{font-size:16px;font-weight:700;color:var(--navy-800)}
 .nav-logo p{font-size:11px;color:var(--muted);font-weight:500}
 .nav-links{display:flex;gap:6px;align-items:center}
 .nav-links a{padding:9px 16px;border-radius:var(--r-pill);font-size:13.5px;font-weight:500;color:var(--ink-soft);transition:all .2s}
 .nav-links a:hover{color:var(--navy-800);background:var(--powder-100)}
 
-/* HERO */
 .hero{max-width:1280px;margin:0 auto;padding:64px 40px 40px;display:grid;grid-template-columns:1.05fr 1fr;gap:56px;align-items:center}
-.hero-badge{
-  display:inline-flex;align-items:center;gap:8px;padding:7px 14px 7px 8px;
-  border-radius:var(--r-pill);background:#fff;border:1px solid var(--line);
-  font-size:12.5px;font-weight:600;color:var(--navy-700);
-  box-shadow:var(--sh-xs);margin-bottom:22px;
-}
-.hero-badge .dot{
-  width:22px;height:22px;border-radius:50%;
-  background:linear-gradient(135deg,var(--royal-500),var(--royal-400));
-  color:#fff;display:grid;place-items:center;font-size:10px;
-}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:7px 14px 7px 8px;border-radius:var(--r-pill);background:#fff;border:1px solid var(--line);font-size:12.5px;font-weight:600;color:var(--navy-700);margin-bottom:22px}
+.hero-badge .dot{width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,var(--royal-500),var(--royal-400));color:#fff;display:grid;place-items:center;font-size:10px}
 .hero h2{font-size:clamp(36px,5vw,58px);font-weight:800;line-height:1.05;letter-spacing:-.035em;color:var(--navy-900);margin-bottom:20px}
 .hero h2 .grad{background:linear-gradient(120deg,var(--royal-500),#6E8EF0 40%,var(--gold-500));-webkit-background-clip:text;background-clip:text;color:transparent}
 .hero p.lead{font-size:16.5px;color:var(--ink-soft);line-height:1.6;max-width:520px;margin-bottom:32px}
 .hero-cta{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:36px}
 .hero-stats{display:flex;gap:32px;padding-top:28px;border-top:1px solid var(--line)}
-.hero-stats .stat-item h4{font-size:24px;color:var(--navy-900);font-weight:800;letter-spacing:-.03em}
+.hero-stats .stat-item h4{font-size:24px;color:var(--navy-900);font-weight:800}
 .hero-stats .stat-item p{font-size:12.5px;color:var(--muted);font-weight:500}
-
 .hero-visual{position:relative;height:520px}
 .visual-card{position:absolute;background:#fff;border-radius:var(--r-xl);box-shadow:var(--sh-lg);border:1px solid var(--line);overflow:hidden}
 .visual-card.main{top:20px;left:20px;right:60px;bottom:80px;padding:24px;background:linear-gradient(160deg,#fff 0%,#F4F8FF 100%);animation:floatY 6s ease-in-out infinite}
-.visual-card.main::before{content:'';position:absolute;top:-60px;right:-60px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(43,78,186,.15),transparent 70%)}
-.visual-card.main::after{content:'';position:absolute;bottom:-60px;left:-60px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(212,175,106,.18),transparent 70%)}
-.visual-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;position:relative;z-index:1}
+.visual-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
 .visual-head .dots{display:flex;gap:5px}
 .visual-head .dots span{width:9px;height:9px;border-radius:50%;background:#D8E1F0}
 .visual-head .dots span:nth-child(1){background:#FF6058}
 .visual-head .dots span:nth-child(2){background:#FFBD2E}
 .visual-head .dots span:nth-child(3){background:#28CA42}
 .visual-title{font-size:12px;font-weight:600;color:var(--muted)}
-.visual-qr{width:140px;height:140px;border-radius:20px;background:#fff;padding:14px;box-shadow:var(--sh-md);display:grid;place-items:center;margin:8px auto 18px;position:relative;z-index:1;border:1px solid var(--line)}
+.visual-qr{width:140px;height:140px;border-radius:20px;background:#fff;padding:14px;box-shadow:var(--sh-md);display:grid;place-items:center;margin:8px auto 18px;border:1px solid var(--line)}
 .visual-qr .qr-box{width:100%;height:100%;background-image:repeating-linear-gradient(0deg,#101A33 0 4px,transparent 4px 8px),repeating-linear-gradient(90deg,#101A33 0 4px,transparent 4px 8px);background-size:8px 8px;opacity:.85;border-radius:6px;-webkit-mask-image:radial-gradient(circle,#000 60%,transparent 100%);mask-image:radial-gradient(circle,#000 60%,transparent 100%)}
-.visual-info{background:#fff;border-radius:16px;padding:14px 16px;border:1px solid var(--line);position:relative;z-index:1}
+.visual-info{background:#fff;border-radius:16px;padding:14px 16px;border:1px solid var(--line)}
 .visual-info .row{display:flex;justify-content:space-between;padding:6px 0;font-size:12px}
 .visual-info .row span:first-child{color:var(--muted)}
 .visual-info .row span:last-child{font-weight:600;color:var(--navy-800)}
-
 .float-card{position:absolute;background:#fff;border-radius:18px;box-shadow:var(--sh-lg);border:1px solid var(--line);padding:14px 16px;display:flex;gap:12px;align-items:center;animation:floatY 5s ease-in-out infinite}
 .float-card.c1{top:-6px;right:-10px;animation-delay:.5s}
 .float-card.c2{bottom:40px;left:-30px;animation-delay:1.2s}
@@ -176,103 +92,78 @@ a{color:inherit;text-decoration:none}
 .float-card.c3 .fc-icon{background:linear-gradient(135deg,var(--gold-500),var(--gold-400));color:#2A1F00}
 .float-card h5{font-size:13px;font-weight:700;color:var(--navy-900)}
 .float-card p{font-size:11px;color:var(--muted);font-weight:500}
-
 @keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
 
-/* ROLES SECTION */
 .roles-section{max-width:1280px;margin:0 auto;padding:20px 40px 100px}
 .section-head{text-align:center;max-width:600px;margin:0 auto 44px}
 .section-head .eyebrow{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--royal-500);margin-bottom:12px}
-.section-head h3{font-size:32px;font-weight:800;color:var(--navy-900);letter-spacing:-.03em;margin-bottom:12px}
+.section-head h3{font-size:32px;font-weight:800;color:var(--navy-900);margin-bottom:12px}
 .section-head p{color:var(--ink-soft);font-size:15px}
 .role-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
-.role-card{background:#fff;border:1.5px solid var(--line);border-radius:var(--r-2xl);padding:36px 32px;cursor:pointer;transition:all .35s cubic-bezier(.4,0,.2,1);position:relative;overflow:hidden}
-.role-card::before{content:'';position:absolute;top:-80px;right:-80px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(43,78,186,.12),transparent 70%);transition:transform .5s}
-.role-card[data-role="admin"]::before{background:radial-gradient(circle,rgba(212,175,106,.18),transparent 70%)}
+.role-card{background:#fff;border:1.5px solid var(--line);border-radius:var(--r-2xl);padding:36px 32px;cursor:pointer;transition:all .35s}
 .role-card:hover{transform:translateY(-6px);box-shadow:var(--sh-lg);border-color:var(--powder-300)}
-.role-card:hover::before{transform:scale(1.3)}
-.role-card .rc-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;position:relative;z-index:1}
-.role-card .rc-icon{width:64px;height:64px;border-radius:20px;display:grid;place-items:center;font-size:26px;color:#fff;box-shadow:0 14px 30px -10px rgba(43,78,186,.5)}
+.role-card .rc-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px}
+.role-card .rc-icon{width:64px;height:64px;border-radius:20px;display:grid;place-items:center;font-size:26px;color:#fff}
 .role-card[data-role="student"] .rc-icon{background:linear-gradient(135deg,var(--navy-800),var(--royal-500))}
-.role-card[data-role="admin"] .rc-icon{background:linear-gradient(135deg,var(--gold-500),#B8934E);color:#2A1F00;box-shadow:0 14px 30px -10px rgba(212,175,106,.6)}
+.role-card[data-role="admin"] .rc-icon{background:linear-gradient(135deg,var(--gold-500),#B8934E);color:#2A1F00}
 .role-card .rc-tag{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:6px 12px;border-radius:var(--r-pill)}
 .role-card[data-role="student"] .rc-tag{background:var(--powder-100);color:var(--royal-500)}
 .role-card[data-role="admin"] .rc-tag{background:#FBF3E0;color:#8A6B1F}
-.role-card h4{font-size:22px;font-weight:800;color:var(--navy-900);margin-bottom:8px;position:relative;z-index:1}
-.role-card p{color:var(--ink-soft);font-size:14px;line-height:1.55;margin-bottom:24px;position:relative;z-index:1}
-.role-card .rc-features{display:flex;flex-direction:column;gap:10px;margin-bottom:28px;position:relative;z-index:1}
+.role-card h4{font-size:22px;font-weight:800;color:var(--navy-900);margin-bottom:8px}
+.role-card p{color:var(--ink-soft);font-size:14px;line-height:1.55;margin-bottom:24px}
+.role-card .rc-features{display:flex;flex-direction:column;gap:10px;margin-bottom:28px}
 .role-card .rc-features div{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--ink-soft)}
 .role-card .rc-features i{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;background:var(--green-soft);color:var(--green);font-size:10px;flex-shrink:0}
-.role-card .rc-cta{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:700;color:var(--royal-500);position:relative;z-index:1;transition:gap .25s}
+.role-card .rc-cta{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:700;color:var(--royal-500)}
 .role-card[data-role="admin"] .rc-cta{color:#8A6B1F}
-.role-card:hover .rc-cta{gap:14px}
 
-/* PAGE SHELL */
 .page-shell{max-width:980px;margin:0 auto;padding:40px}
-.page-topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:32px}
-.breadcrumb{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);font-weight:500}
-.breadcrumb strong{color:var(--navy-900);font-weight:700}
-
-/* STEPPER */
 .stepper{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:32px;flex-wrap:wrap}
-.step{display:flex;align-items:center;gap:10px;padding:10px 18px;border-radius:var(--r-pill);background:#fff;border:1.5px solid var(--line);font-size:13px;font-weight:600;color:var(--muted);transition:all .3s}
+.step{display:flex;align-items:center;gap:10px;padding:10px 18px;border-radius:var(--r-pill);background:#fff;border:1.5px solid var(--line);font-size:13px;font-weight:600;color:var(--muted)}
 .step .num{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:var(--line);color:var(--muted);font-size:11.5px;font-weight:700}
-.step.active{background:linear-gradient(135deg,var(--navy-800),var(--royal-500));color:#fff;border-color:transparent;box-shadow:0 10px 22px -10px rgba(43,78,186,.6)}
+.step.active{background:linear-gradient(135deg,var(--navy-800),var(--royal-500));color:#fff;border-color:transparent}
 .step.active .num{background:rgba(255,255,255,.22);color:#fff}
 .step.done{background:var(--green-soft);color:#0E7A47;border-color:transparent}
 .step.done .num{background:var(--green);color:#fff}
 .step-line{width:36px;height:2px;background:var(--line);border-radius:2px}
 .step-line.done{background:var(--green)}
 
-/* FORM CARD */
-.form-card{background:#fff;border:1.5px solid var(--line);border-radius:var(--r-2xl);padding:40px;box-shadow:var(--sh-md);position:relative;overflow:hidden}
-.form-card::before{content:'';position:absolute;top:-100px;right:-100px;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(43,78,186,.08),transparent 70%);pointer-events:none}
-.form-card-head{display:flex;gap:16px;align-items:center;margin-bottom:32px;position:relative;z-index:1}
-.form-card-head .ic{width:56px;height:56px;border-radius:18px;display:grid;place-items:center;background:linear-gradient(135deg,var(--navy-800),var(--royal-500));color:#fff;font-size:22px;flex-shrink:0;box-shadow:0 14px 30px -10px rgba(43,78,186,.5)}
-.form-card-head h3{font-size:22px;font-weight:800;color:var(--navy-900);letter-spacing:-.02em}
+.form-card{background:#fff;border:1.5px solid var(--line);border-radius:var(--r-2xl);padding:40px;box-shadow:var(--sh-md)}
+.form-card-head{display:flex;gap:16px;align-items:center;margin-bottom:32px}
+.form-card-head .ic{width:56px;height:56px;border-radius:18px;display:grid;place-items:center;background:linear-gradient(135deg,var(--navy-800),var(--royal-500));color:#fff;font-size:22px;flex-shrink:0}
+.form-card-head h3{font-size:22px;font-weight:800;color:var(--navy-900)}
 .form-card-head p{font-size:13.5px;color:var(--muted);margin-top:2px}
-
 .field-row{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:20px}
-.field{margin-bottom:20px;position:relative;z-index:1}
-.field label{display:block;font-size:13px;font-weight:600;color:var(--navy-800);margin-bottom:8px;letter-spacing:-.01em}
+.field{margin-bottom:20px}
+.field label{display:block;font-size:13px;font-weight:600;color:var(--navy-800);margin-bottom:8px}
 .field label .req{color:var(--red);margin-left:2px}
 .input-wrap{position:relative}
-.input-wrap i.pre{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:14px;pointer-events:none;transition:color .2s}
+.input-wrap i.pre{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:14px;pointer-events:none}
 .input{width:100%;padding:15px 18px 15px 46px;border-radius:var(--r-md);border:1.5px solid var(--line);background:var(--off-white);font-size:14.5px;color:var(--ink);font-weight:500;transition:all .2s;outline:none}
 .input::placeholder{color:#A5B0C5;font-weight:400}
 .input:focus{border-color:var(--royal-400);background:#fff;box-shadow:0 0 0 4px rgba(43,78,186,.1)}
-select.input{appearance:none;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%237A88A6' stroke-width='2.5' stroke-linecap='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 18px center}
-
-.alert{display:none;gap:10px;padding:14px 18px;border-radius:var(--r-md);font-size:13.5px;margin-bottom:22px;align-items:flex-start;animation:slideDown .3s;position:relative;z-index:1}
+.alert{display:none;gap:10px;padding:14px 18px;border-radius:var(--r-md);font-size:13.5px;margin-bottom:22px;align-items:flex-start}
 .alert.show{display:flex}
 .alert-error{background:var(--red-soft);color:#8A2024;border:1px solid #F8C8C8}
-@keyframes slideDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
 
-/* QR RESULT */
 .qr-result{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start}
-.qr-ticket{background:linear-gradient(160deg,var(--navy-800) 0%,var(--navy-700) 60%,var(--royal-500) 140%);border-radius:var(--r-2xl);padding:32px;color:#fff;position:relative;overflow:hidden;box-shadow:var(--sh-lg)}
-.qr-ticket::before{content:'';position:absolute;top:-60px;right:-60px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(212,175,106,.25),transparent 70%)}
-.qr-ticket::after{content:'';position:absolute;bottom:-80px;left:-80px;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,rgba(74,111,224,.3),transparent 70%)}
-.qr-ticket .tick-head{display:flex;align-items:center;gap:14px;margin-bottom:24px;position:relative;z-index:1}
-.qr-ticket .tick-icon{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;background:linear-gradient(135deg,#12B76A,#0E9B58);font-size:22px;color:#fff;box-shadow:0 14px 30px -10px rgba(18,183,106,.7);animation:pop .5s cubic-bezier(.34,1.56,.64,1)}
-@keyframes pop{from{transform:scale(0)}to{transform:scale(1)}}
-.qr-ticket h3{font-size:19px;font-weight:800;letter-spacing:-.02em}
+.qr-ticket{background:linear-gradient(160deg,var(--navy-800) 0%,var(--navy-700) 60%,var(--royal-500) 140%);border-radius:var(--r-2xl);padding:32px;color:#fff;box-shadow:var(--sh-lg)}
+.qr-ticket .tick-head{display:flex;align-items:center;gap:14px;margin-bottom:24px}
+.qr-ticket .tick-icon{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;background:linear-gradient(135deg,#12B76A,#0E9B58);font-size:22px;color:#fff}
+.qr-ticket h3{font-size:19px;font-weight:800}
 .qr-ticket p{font-size:12.5px;opacity:.75;margin-top:2px}
-
-.ticket-info{position:relative;z-index:1;margin-bottom:24px}
+.ticket-info{margin-bottom:24px}
 .ticket-info .trow{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px dashed rgba(255,255,255,.15);font-size:13.5px}
 .ticket-info .trow:last-child{border-bottom:none}
 .ticket-info .trow span:first-child{opacity:.7;font-weight:500}
 .ticket-info .trow span:last-child{font-weight:600;text-align:right;max-width:65%}
-
-.qr-holder{background:#fff;border-radius:var(--r-xl);padding:22px;text-align:center;position:relative;z-index:1;box-shadow:0 20px 40px -18px rgba(0,0,0,.4);min-height:250px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.qr-holder{background:#fff;border-radius:var(--r-xl);padding:22px;text-align:center;min-height:250px;display:flex;flex-direction:column;align-items:center;justify-content:center}
 #qrcode{display:inline-block;padding:12px;background:#fff;border-radius:16px;min-height:204px;min-width:204px;display:flex;align-items:center;justify-content:center}
 #qrcode canvas, #qrcode img{display:block;border-radius:8px;max-width:100%;height:auto}
 .qr-holder .qr-hint{font-size:11.5px;color:var(--muted);margin-top:12px;display:flex;align-items:center;justify-content:center;gap:6px;font-weight:500}
 .qr-holder .qr-loading{display:flex;flex-direction:column;align-items:center;gap:10px;color:var(--muted);font-size:12.5px}
 .qr-loading .spinner{width:32px;height:32px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--royal-500);animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-
 .qr-side-info{display:flex;flex-direction:column;gap:16px}
 .info-card{background:#fff;border:1.5px solid var(--line);border-radius:var(--r-xl);padding:24px;box-shadow:var(--sh-sm)}
 .info-card h4{font-size:14px;font-weight:700;color:var(--navy-900);margin-bottom:14px;display:flex;align-items:center;gap:8px}
@@ -282,72 +173,50 @@ select.input{appearance:none;cursor:pointer;background-image:url("data:image/svg
 .info-card li i{color:var(--green);font-size:14px;margin-top:2px;flex-shrink:0}
 .info-card .small-muted{font-size:12.5px;color:var(--muted);line-height:1.6}
 
-/* ADMIN DASHBOARD */
 .admin-layout{display:grid;grid-template-columns:260px 1fr;min-height:100vh}
 .sidebar{background:linear-gradient(180deg,var(--navy-900) 0%,var(--navy-800) 60%,#15224A 100%);color:#fff;padding:28px 20px;display:flex;flex-direction:column;gap:24px;position:sticky;top:0;height:100vh;overflow-y:auto}
-.sidebar::before{content:'';position:absolute;top:-60px;right:-60px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(43,78,186,.35),transparent 70%);pointer-events:none}
-.sb-logo{display:flex;align-items:center;gap:12px;padding-bottom:20px;border-bottom:1px solid rgba(255,255,255,.08);position:relative;z-index:1}
-.sb-logo .mark{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(135deg,var(--royal-500),var(--royal-400));font-size:16px;box-shadow:0 10px 22px -8px rgba(43,78,186,.8)}
-.sb-logo h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
+.sb-logo{display:flex;align-items:center;gap:12px;padding-bottom:20px;border-bottom:1px solid rgba(255,255,255,.08)}
+.sb-logo .mark{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(135deg,var(--royal-500),var(--royal-400));font-size:16px}
+.sb-logo h1{font-size:15px;font-weight:700}
 .sb-logo p{font-size:11px;color:rgba(255,255,255,.55);font-weight:500}
-.sb-section-title{font-size:10.5px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.4);padding:0 12px;margin-top:4px}
 .sb-menu{display:flex;flex-direction:column;gap:4px}
-.sb-item{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:var(--r-md);font-size:13.5px;font-weight:500;color:rgba(255,255,255,.72);cursor:pointer;transition:all .2s;position:relative}
-.sb-item i{font-size:15px;width:20px;text-align:center;color:rgba(255,255,255,.6)}
+.sb-item{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:var(--r-md);font-size:13.5px;font-weight:500;color:rgba(255,255,255,.72);cursor:pointer;transition:all .2s}
+.sb-item i{font-size:15px;width:20px;text-align:center}
 .sb-item:hover{background:rgba(255,255,255,.06);color:#fff}
-.sb-item:hover i{color:#fff}
-.sb-item.active{background:linear-gradient(135deg,rgba(43,78,186,.9),rgba(74,111,224,.7));color:#fff;box-shadow:0 12px 26px -12px rgba(43,78,186,.9)}
-.sb-item.active i{color:#fff}
-.sb-footer{margin-top:auto;position:relative;z-index:1}
+.sb-item.active{background:linear-gradient(135deg,rgba(43,78,186,.9),rgba(74,111,224,.7));color:#fff}
+.sb-footer{margin-top:auto}
 .sb-user{display:flex;align-items:center;gap:11px;padding:12px;border-radius:var(--r-md);background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08)}
 .sb-user .avatar{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,var(--gold-500),var(--gold-400));color:#2A1F00;display:grid;place-items:center;font-size:14px;font-weight:700}
 .sb-user h5{font-size:13px;font-weight:700;color:#fff}
 .sb-user p{font-size:11px;color:rgba(255,255,255,.55);font-weight:500}
 .sb-logout{width:100%;margin-top:12px;padding:11px;border-radius:var(--r-md);background:rgba(229,72,77,.15);border:1px solid rgba(229,72,77,.3);color:#FF9A9E;font-size:12.5px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;transition:all .2s;font-family:inherit}
 .sb-logout:hover{background:rgba(229,72,77,.28);color:#fff}
-
 .admin-main{padding:28px 36px 40px;background:var(--off-white);min-height:100vh}
 .admin-topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;gap:20px;flex-wrap:wrap}
-.admin-greeting h2{font-size:24px;font-weight:800;color:var(--navy-900);letter-spacing:-.03em}
+.admin-greeting h2{font-size:24px;font-weight:800;color:var(--navy-900)}
 .admin-greeting h2 span{color:var(--royal-500)}
 .admin-greeting p{font-size:13px;color:var(--muted);margin-top:3px;display:flex;align-items:center;gap:8px}
-.admin-greeting p i{color:var(--royal-500)}
 .admin-actions{display:flex;gap:10px;align-items:center}
 
-.summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:26px}
-.summary-card{background:#fff;border:1.5px solid var(--line);border-radius:var(--r-xl);padding:22px;position:relative;overflow:hidden;transition:all .3s cubic-bezier(.4,0,.2,1)}
+.summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:26px}
+.summary-card{background:#fff;border:1.5px solid var(--line);border-radius:var(--r-xl);padding:22px;transition:all .3s}
 .summary-card:hover{transform:translateY(-4px);box-shadow:var(--sh-md);border-color:var(--powder-300)}
-.summary-card::before{content:'';position:absolute;top:-40px;right:-40px;width:140px;height:140px;border-radius:50%;opacity:.5;pointer-events:none}
-.summary-card.sc-1::before{background:radial-gradient(circle,rgba(18,183,106,.12),transparent 70%)}
-.summary-card.sc-2::before{background:radial-gradient(circle,rgba(247,144,9,.14),transparent 70%)}
-.summary-card.sc-3::before{background:radial-gradient(circle,rgba(43,78,186,.14),transparent 70%)}
-.summary-card.sc-4::before{background:radial-gradient(circle,rgba(212,175,106,.18),transparent 70%)}
-.summary-card .sc-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;position:relative;z-index:1}
+.summary-card .sc-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px}
 .summary-card .sc-ic{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;font-size:17px;color:#fff}
-.summary-card.sc-1 .sc-ic{background:linear-gradient(135deg,#12B76A,#0E9B58);box-shadow:0 12px 24px -10px rgba(18,183,106,.6)}
-.summary-card.sc-2 .sc-ic{background:linear-gradient(135deg,#F79009,#DC6803);box-shadow:0 12px 24px -10px rgba(247,144,9,.55)}
-.summary-card.sc-3 .sc-ic{background:linear-gradient(135deg,var(--royal-500),var(--royal-400));box-shadow:0 12px 24px -10px rgba(43,78,186,.55)}
-.summary-card.sc-4 .sc-ic{background:linear-gradient(135deg,var(--gold-500),var(--gold-400));color:#2A1F00;box-shadow:0 12px 24px -10px rgba(212,175,106,.6)}
+.summary-card.sc-1 .sc-ic{background:linear-gradient(135deg,#12B76A,#0E9B58)}
+.summary-card.sc-2 .sc-ic{background:linear-gradient(135deg,#F79009,#DC6803)}
+.summary-card.sc-3 .sc-ic{background:linear-gradient(135deg,var(--royal-500),var(--royal-400))}
 .summary-card .sc-trend{font-size:11px;font-weight:700;padding:4px 9px;border-radius:var(--r-pill);background:var(--green-soft);color:#0E7A47}
-.summary-card.sc-4 .sc-trend{background:#FBF3E0;color:#8A6B1F}
-.summary-card.sc-2 .sc-trend{background:var(--amber-soft);color:#A85A00}
-.summary-card .sc-lbl{font-size:12.5px;color:var(--muted);font-weight:600;margin-bottom:4px;position:relative;z-index:1}
-.summary-card .sc-val{font-size:30px;font-weight:800;color:var(--navy-900);letter-spacing:-.035em;font-family:'Poppins',sans-serif;position:relative;z-index:1;line-height:1.1}
-.summary-card .sc-sub{font-size:11.5px;color:var(--muted);margin-top:6px;position:relative;z-index:1}
+.summary-card .sc-lbl{font-size:12.5px;color:var(--muted);font-weight:600;margin-bottom:4px}
+.summary-card .sc-val{font-size:30px;font-weight:800;color:var(--navy-900);font-family:'Poppins',sans-serif;line-height:1.1}
+.summary-card .sc-sub{font-size:11.5px;color:var(--muted);margin-top:6px}
 
-.session-panel{background:linear-gradient(150deg,var(--navy-900) 0%,var(--navy-800) 60%,#1E2E58 100%);border-radius:var(--r-2xl);padding:30px;color:#fff;display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center;margin-bottom:26px;position:relative;overflow:hidden;box-shadow:var(--sh-lg)}
-.session-panel::before{content:'';position:absolute;top:-80px;right:-60px;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(43,78,186,.4),transparent 70%)}
-.session-panel::after{content:'';position:absolute;bottom:-100px;left:30%;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,rgba(212,175,106,.18),transparent 70%)}
-.sp-left{position:relative;z-index:1}
-.sp-status{display:inline-flex;align-items:center;gap:9px;padding:6px 14px 6px 8px;border-radius:var(--r-pill);background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);font-size:12px;font-weight:600;margin-bottom:16px}
-.sp-status .pd{width:9px;height:9px;border-radius:50%;background:#12B76A;box-shadow:0 0 0 0 rgba(18,183,106,.7);animation:pulse 1.8s infinite}
-.sp-status .pd.off{background:#F79009;animation:none;box-shadow:none}
-@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(18,183,106,.7)}70%{box-shadow:0 0 0 12px rgba(18,183,106,0)}100%{box-shadow:0 0 0 0 rgba(18,183,106,0)}}
-.session-panel h3{font-size:22px;font-weight:800;letter-spacing:-.02em;margin-bottom:6px}
-.session-panel .sp-sub{font-size:13.5px;opacity:.75;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.session-panel .sp-sub i{color:var(--gold-400)}
-.sp-right{display:flex;gap:10px;position:relative;z-index:1;flex-wrap:wrap}
-.sp-right .btn{white-space:nowrap}
+.banner-panel{background:linear-gradient(150deg,#0A4D2E 0%,#0E7A47 60%,#12B76A 140%);border-radius:var(--r-2xl);padding:30px;color:#fff;display:flex;justify-content:space-between;align-items:center;margin-bottom:26px;box-shadow:var(--sh-lg);flex-wrap:wrap;gap:20px}
+.banner-left h3{font-size:22px;font-weight:800;margin-bottom:6px}
+.banner-left p{font-size:13.5px;opacity:.85;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.banner-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border-radius:var(--r-pill);background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);font-size:12px;font-weight:600;margin-bottom:14px}
+.banner-badge .pd{width:9px;height:9px;border-radius:50%;background:#4AFF9E;box-shadow:0 0 0 0 rgba(74,255,158,.7);animation:pulse 1.8s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(74,255,158,.7)}70%{box-shadow:0 0 0 12px rgba(74,255,158,0)}100%{box-shadow:0 0 0 0 rgba(74,255,158,0)}}
 
 .toolbar{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:22px}
 .tool-card{background:#fff;border:1.5px solid var(--line);border-radius:var(--r-xl);padding:22px}
@@ -357,11 +226,10 @@ select.input{appearance:none;cursor:pointer;background-image:url("data:image/svg
 .tool-card .field label{font-size:12px;margin-bottom:6px}
 .tool-card .input{padding:12px 16px 12px 42px;font-size:13.5px;border-radius:14px}
 .tool-card .input.no-icon{padding-left:16px}
-
 .scan-bar{display:flex;gap:8px;align-items:center;background:var(--off-white);border:1.5px solid var(--line);border-radius:var(--r-md);padding:6px 6px 6px 16px;transition:all .2s}
 .scan-bar:focus-within{border-color:var(--royal-400);background:#fff;box-shadow:0 0 0 4px rgba(43,78,186,.1)}
 .scan-bar i.scan-ic{color:var(--royal-500);font-size:15px}
-.scan-bar input{flex:1;border:none;background:transparent;outline:none;font-family:inherit;font-size:13.5px;padding:10px 0;color:var(--ink);font-weight:500}
+.scan-bar input{flex:1;border:none;background:transparent;outline:none;font-size:13.5px;padding:10px 0;color:var(--ink);font-weight:500}
 .scan-bar input::placeholder{color:#A5B0C5;font-weight:400}
 
 .table-card{background:#fff;border:1.5px solid var(--line);border-radius:var(--r-xl);overflow:hidden;box-shadow:var(--sh-sm)}
@@ -373,35 +241,28 @@ select.input{appearance:none;cursor:pointer;background-image:url("data:image/svg
 table{width:100%;border-collapse:collapse;min-width:680px}
 th{background:var(--off-white);text-align:left;padding:14px 24px;font-size:11px;font-weight:700;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid var(--line);white-space:nowrap}
 td{padding:16px 24px;font-size:13.5px;border-bottom:1px solid var(--line-soft);color:var(--ink);font-weight:500}
-tbody tr{transition:background .15s}
 tbody tr:hover{background:var(--powder-100)}
 tbody tr:last-child td{border-bottom:none}
-
 .avatar-cell{display:flex;align-items:center;gap:12px}
 .avatar{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;font-size:12.5px;font-weight:700;color:#fff;flex-shrink:0;background:linear-gradient(135deg,var(--navy-800),var(--royal-500))}
 .avatar.a2{background:linear-gradient(135deg,#0E7A47,#12B76A)}
 .avatar.a3{background:linear-gradient(135deg,#B8934E,#D4AF6A);color:#2A1F00}
 .avatar.a4{background:linear-gradient(135deg,#A85A00,#F79009)}
 .avatar-cell .name{font-weight:600;color:var(--navy-900);font-size:13.5px}
-.avatar-cell .npm{font-size:11.5px;color:var(--muted);font-weight:500}
-
 .badge{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:var(--r-pill);font-size:11.5px;font-weight:700}
 .badge-hadir{background:var(--green-soft);color:#0E7A47}
 .badge-telat{background:var(--amber-soft);color:#A85A00}
 .badge-absen{background:var(--red-soft);color:#8A2024}
 .badge i{font-size:9px}
-
 .empty-state{padding:70px 24px;text-align:center}
-.empty-state .es-icon{width:88px;height:88px;border-radius:26px;margin:0 auto 18px;background:linear-gradient(135deg,var(--powder-100),var(--powder-200));color:var(--royal-500);display:grid;place-items:center;font-size:34px;position:relative}
-.empty-state .es-icon::after{content:'';position:absolute;inset:-6px;border-radius:30px;border:2px dashed var(--powder-300)}
+.empty-state .es-icon{width:88px;height:88px;border-radius:26px;margin:0 auto 18px;background:linear-gradient(135deg,var(--powder-100),var(--powder-200));color:var(--royal-500);display:grid;place-items:center;font-size:34px}
 .empty-state h4{font-size:16px;font-weight:700;color:var(--navy-900);margin-bottom:6px}
 .empty-state p{font-size:13.5px;color:var(--muted);max-width:360px;margin:0 auto 20px;line-height:1.6}
 .skeleton{padding:50px 20px;text-align:center}
 .spinner{width:38px;height:38px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--royal-500);animation:spin .8s linear infinite;margin:0 auto 14px}
 
-/* TOAST */
 .toast-container{position:fixed;top:22px;right:22px;z-index:9999;display:flex;flex-direction:column;gap:12px;max-width:380px}
-.toast{background:#fff;border-radius:var(--r-lg);padding:16px 18px;display:flex;gap:14px;align-items:flex-start;box-shadow:var(--sh-lg);border:1px solid var(--line);border-left:4px solid var(--royal-500);animation:toastIn .4s cubic-bezier(.34,1.56,.64,1);position:relative;overflow:hidden}
+.toast{background:#fff;border-radius:var(--r-lg);padding:16px 18px;display:flex;gap:14px;align-items:flex-start;box-shadow:var(--sh-lg);border:1px solid var(--line);border-left:4px solid var(--royal-500);animation:toastIn .4s}
 .toast.success{border-left-color:var(--green)}
 .toast.error{border-left-color:var(--red)}
 .toast.warning{border-left-color:var(--amber)}
@@ -413,17 +274,15 @@ tbody tr:last-child td{border-bottom:none}
 .toast .t-body p{font-size:12.5px;color:var(--muted);line-height:1.45}
 @keyframes toastIn{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:none}}
 
-/* RESPONSIVE */
 @media (max-width:1100px){
   .hero{grid-template-columns:1fr;gap:60px;padding:48px 32px}
   .hero-visual{height:440px;max-width:520px;margin:0 auto;width:100%}
-  .summary-grid{grid-template-columns:repeat(2,1fr)}
+  .summary-grid{grid-template-columns:1fr 1fr}
 }
 @media (max-width:900px){
   .admin-layout{grid-template-columns:1fr}
   .sidebar{position:relative;height:auto;padding:20px;flex-direction:row;flex-wrap:wrap;align-items:center;gap:12px}
   .sb-logo{border-bottom:none;padding-bottom:0;flex:1}
-  .sb-section-title{display:none}
   .sb-menu{flex-direction:row;flex-wrap:wrap;flex:1 1 100%}
   .sb-item{padding:9px 14px;font-size:12.5px}
   .sb-footer{margin-top:0;flex:1;display:flex;gap:10px;align-items:center}
@@ -442,107 +301,66 @@ tbody tr:last-child td{border-bottom:none}
   .form-card{padding:28px 22px}
   .field-row{grid-template-columns:1fr;gap:0}
   .qr-result{grid-template-columns:1fr}
-  .session-panel{grid-template-columns:1fr;padding:24px}
-  .session-panel h3{font-size:19px}
-  .admin-greeting h2{font-size:20px}
+  .summary-grid{grid-template-columns:1fr}
 }
 @media (max-width:520px){
   .hero h2{font-size:32px}
-  .summary-grid{grid-template-columns:1fr}
   .stepper{gap:4px}
   .step{padding:8px 12px;font-size:11.5px}
   .step .num{width:20px;height:20px;font-size:10px}
   .step-line{width:16px}
   .toast-container{left:16px;right:16px;max-width:none}
-  .form-card-head .ic{width:48px;height:48px;font-size:19px}
-  .form-card-head h3{font-size:18px}
 }
 </style>
 </head>
 <body>
 
-<div class="bg-decor">
-  <div class="blob b1"></div>
-  <div class="blob b2"></div>
-  <div class="blob b3"></div>
-</div>
+<div class="bg-decor"><div class="blob b1"></div><div class="blob b2"></div></div>
 <div class="grid-lines"></div>
-
 <div class="toast-container" id="toastContainer"></div>
 <div id="app"></div>
 
 <script>
-/* =========================================================
-   KONFIGURASI — Ganti dengan URL Web App Google Apps Script
-   ========================================================= */
 const API_URL = 'https://script.google.com/macros/s/AKfycbzJzOPuY7QRj7FcZfEoX_JLV82i76CjxBbfu1oTi29kEl91zaWa2RDgobWRLYYAbGN0WA/exec';
 
-const MATAKULIAH = [
-  'Rekayasa Perangkat Lunak II',
-  'Jaringan Komputer',
-  'Pemograman Beorientasi Objek',
-  'Komputer Grafik',
-  'Projek Perangkat Lunak'
-];
+const MATAKULIAH = 'Rekayasa Perangkat Lunak II';
 
-/* =========================================================
-   STATE
-   ========================================================= */
 const state = {
   view:'landing',
   user:null,
   lastAbsen:null,
   attendanceCache:[],
-  sessionActive:false,
-  sessionCourse:'Pemrograman Web',
-  sessionDate:new Date().toISOString().slice(0,10),
+  selectedDate:new Date().toISOString().slice(0,10),
   adminUser:'admin',
   adminPass:'admin123',
   adminTab:'dashboard'
 };
 
-/* =========================================================
-   UTIL
-   ========================================================= */
 function toast(msg, type='success', title=null){
   const c = document.getElementById('toastContainer');
   const el = document.createElement('div');
   el.className = `toast ${type}`;
   const icons = {success:'fa-circle-check', error:'fa-circle-xmark', warning:'fa-triangle-exclamation'};
   const titles = {success:'Berhasil', error:'Gagal', warning:'Perhatian'};
-  el.innerHTML = `
-    <div class="t-ic"><i class="fas ${icons[type]}"></i></div>
-    <div class="t-body">
-      <strong>${title || titles[type]}</strong>
-      <p>${msg}</p>
-    </div>`;
+  el.innerHTML = `<div class="t-ic"><i class="fas ${icons[type]}"></i></div><div class="t-body"><strong>${title || titles[type]}</strong><p>${msg}</p></div>`;
   c.appendChild(el);
-  setTimeout(() => {
-    el.style.transition = 'all .3s';
-    el.style.opacity = '0';
-    el.style.transform = 'translateX(40px)';
-    setTimeout(() => el.remove(), 300);
-  }, 3400);
+  setTimeout(() => { el.style.transition = 'all .3s'; el.style.opacity = '0'; el.style.transform = 'translateX(40px)'; setTimeout(() => el.remove(), 300); }, 3400);
 }
 
 function formatTanggal(dateStr){
   if(!dateStr) return '-';
-  const d = new Date(dateStr);
-  return d.toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  return new Date(dateStr).toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
 }
 function formatTanggalShort(dateStr){
   if(!dateStr) return '-';
-  const d = new Date(dateStr);
-  return d.toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'});
+  return new Date(dateStr).toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'});
 }
 function hitungPertemuan(dateStr){
   if(!dateStr) return 'Pertemuan 1';
   const d = new Date(dateStr);
-  return `Pertemuan ${(d.getDate()%4)+1}`;
+  return 'Pertemuan ' + ((d.getDate()%4)+1);
 }
-function initialOf(name){
-  return (name||'M').split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase();
-}
+function initialOf(name){ return (name||'M').split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase(); }
 function getGreeting(){
   const h = new Date().getHours();
   if(h<11) return 'Selamat pagi';
@@ -551,87 +369,38 @@ function getGreeting(){
   return 'Selamat malam';
 }
 
-/* =========================================================
-   QR GENERATOR — MULTI FALLBACK
-   ========================================================= */
 async function generateQR(container, content, size=180){
   container.innerHTML = '<div class="qr-loading"><div class="spinner"></div><span>Membuat QR...</span></div>';
-
-  // Fallback 1: coba library QRCode modern (qrcode@1.5.3)
   if(typeof QRCode !== 'undefined' && typeof QRCode.toCanvas === 'function'){
     try{
       const canvas = document.createElement('canvas');
-      await QRCode.toCanvas(canvas, content, {
-        width: size,
-        margin: 1,
-        color: { dark:'#101A33', light:'#ffffff' },
-        errorCorrectionLevel: 'H'
-      });
+      await QRCode.toCanvas(canvas, content, {width:size, margin:1, color:{dark:'#101A33',light:'#ffffff'}, errorCorrectionLevel:'H'});
       container.innerHTML = '';
       container.appendChild(canvas);
       return true;
-    } catch(err){
-      console.warn('QRCode.toCanvas gagal, fallback ke API:', err);
-    }
+    } catch(err){ console.warn('QRCode gagal:', err); }
   }
-
-  // Fallback 2: coba library lama (qrcodejs)
-  if(typeof QRCode !== 'undefined' && typeof QRCode === 'function'){
-    try{
-      container.innerHTML = '';
-      new QRCode(container, {
-        text: content,
-        width: size,
-        height: size,
-        colorDark:'#101A33',
-        colorLight:'#ffffff',
-        correctLevel: QRCode.CorrectLevel ? QRCode.CorrectLevel.H : 2
-      });
-      return true;
-    } catch(err){
-      console.warn('QRCode lama gagal, fallback ke API:', err);
-    }
-  }
-
-  // Fallback 3: pakai API online (paling anti gagal)
   try{
-    const apiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encodeURIComponent(content)}&color=101A33&bgcolor=ffffff&qzone=1&margin=0`;
+    const apiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encodeURIComponent(content)}&color=101A33&bgcolor=ffffff&qzone=1`;
     const img = new Image();
-    img.alt = 'QR Code Absensi';
-    img.width = size;
-    img.height = size;
+    img.alt = 'QR Code';
+    img.width = size; img.height = size;
     img.style.borderRadius = '8px';
     img.style.display = 'block';
-
-    await new Promise((resolve, reject) => {
-      img.onload = resolve;
-      img.onerror = reject;
-      img.src = apiUrl;
-    });
-
+    await new Promise((resolve, reject) => { img.onload = resolve; img.onerror = reject; img.src = apiUrl; });
     container.innerHTML = '';
     container.appendChild(img);
     return true;
   } catch(err){
-    console.error('Semua metode QR gagal:', err);
-    container.innerHTML = `
-      <div style="text-align:center;padding:20px;color:var(--red)">
-        <i class="fas fa-triangle-exclamation" style="font-size:28px;margin-bottom:10px"></i>
-        <p style="font-size:12.5px;font-weight:600;margin-bottom:6px">Gagal membuat QR Code</p>
-        <p style="font-size:11.5px;color:var(--muted)">Periksa koneksi internet Anda, lalu coba muat ulang.</p>
-      </div>`;
+    container.innerHTML = `<div style="text-align:center;padding:20px;color:var(--red)"><i class="fas fa-triangle-exclamation" style="font-size:28px;margin-bottom:10px"></i><p style="font-size:12.5px;font-weight:600">Gagal membuat QR</p><p style="font-size:11.5px;color:var(--muted)">Periksa koneksi internet.</p></div>`;
     return false;
   }
 }
 
-/* =========================================================
-   RENDER ROUTER
-   ========================================================= */
 function render(view){
   state.view = view;
   const app = document.getElementById('app');
   window.scrollTo({top:0,behavior:'smooth'});
-
   switch(view){
     case 'landing':       app.innerHTML = viewLanding(); break;
     case 'student-form':  app.innerHTML = viewStudentForm(); break;
@@ -641,33 +410,19 @@ function render(view){
   }
 }
 
-/* =========================================================
-   VIEW: LANDING
-   ========================================================= */
 function viewLanding(){
   return `
     <nav class="navbar">
-      <div class="nav-logo">
-        <div class="logo-mark"><i class="fas fa-qrcode"></i></div>
-        <div><h1>Smart Attendance</h1><p>QR Based System</p></div>
-      </div>
-      <div class="nav-links">
-        <a href="#" onclick="event.preventDefault()">Beranda</a>
-        <a href="#" onclick="event.preventDefault()">Fitur</a>
-        <a href="#" onclick="event.preventDefault()">Tentang</a>
-      </div>
+      <div class="nav-logo"><div class="logo-mark"><i class="fas fa-qrcode"></i></div><div><h1>Smart Attendance</h1><p>${MATAKULIAH}</p></div></div>
+      <div class="nav-links"><a href="#" onclick="event.preventDefault()">Beranda</a><a href="#" onclick="event.preventDefault()">Fitur</a></div>
     </nav>
-
     <section class="hero">
       <div class="hero-left">
-        <div class="hero-badge">
-          <span class="dot"><i class="fas fa-bolt"></i></span>
-          Smart Attendance System v2.0
-        </div>
-        <h2>Smart Attendance,<br><span class="grad">Made Simple.</span></h2>
-        <p class="lead">Sistem absensi perkuliahan berbasis QR Code yang cepat, akurat, dan terintegrasi langsung dengan Google Sheets. Cukup pindai, dan kehadiran tercatat otomatis.</p>
+        <div class="hero-badge"><span class="dot"><i class="fas fa-bolt"></i></span> Sistem Absensi QR</div>
+        <h2>Absensi <span class="grad">Rekayasa Perangkat Lunak II</span></h2>
+        <p class="lead">Sistem absensi perkuliahan berbasis QR Code yang cepat, akurat, dan terintegrasi langsung dengan Google Sheets.</p>
         <div class="hero-cta">
-          <button class="btn btn-primary btn-lg" onclick="startStudent()"><i class="fas fa-qrcode"></i> Mulai Absen</button>
+          <button class="btn btn-primary btn-lg" onclick="startStudent()"><i class="fas fa-qrcode"></i> Isi Absensi</button>
           <button class="btn btn-outline btn-lg" onclick="startAdmin()"><i class="fas fa-chart-line"></i> Dashboard Admin</button>
         </div>
         <div class="hero-stats">
@@ -676,18 +431,14 @@ function viewLanding(){
           <div class="stat-item"><h4>24/7</h4><p>Cloud Sync</p></div>
         </div>
       </div>
-
       <div class="hero-visual">
         <div class="visual-card main">
-          <div class="visual-head">
-            <div class="dots"><span></span><span></span><span></span></div>
-            <div class="visual-title">attendance.portal</div>
-          </div>
+          <div class="visual-head"><div class="dots"><span></span><span></span><span></span></div><div class="visual-title">attendance.portal</div></div>
           <div class="visual-qr"><div class="qr-box"></div></div>
           <div class="visual-info">
             <div class="row"><span>Nama</span><span>Andi Pratama</span></div>
             <div class="row"><span>NPM</span><span>2210012345</span></div>
-            <div class="row"><span>Mata Kuliah</span><span>Pemrograman Web</span></div>
+            <div class="row"><span>Mata Kuliah</span><span>RPL II</span></div>
             <div class="row"><span>Status</span><span style="color:#12B76A">✓ Hadir</span></div>
           </div>
         </div>
@@ -696,21 +447,17 @@ function viewLanding(){
         <div class="float-card c3"><div class="fc-icon"><i class="fas fa-trophy"></i></div><div><h5>98% Kehadiran</h5><p>Pekan ini</p></div></div>
       </div>
     </section>
-
     <section class="roles-section">
       <div class="section-head">
         <span class="eyebrow">Pilih Peran Anda</span>
         <h3>Mulai Dalam Satu Klik</h3>
-        <p>Pilih salah satu peran di bawah untuk mengakses sistem absensi sesuai kebutuhan Anda.</p>
+        <p>Pilih salah satu peran di bawah untuk mengakses sistem absensi.</p>
       </div>
       <div class="role-grid">
         <div class="role-card" data-role="student" onclick="startStudent()">
-          <div class="rc-top">
-            <div class="rc-icon"><i class="fas fa-user-graduate"></i></div>
-            <div class="rc-tag">Mahasiswa</div>
-          </div>
-          <h4>Absen Kehadiran</h4>
-          <p>Isi data diri, pilih mata kuliah, dan dapatkan QR Code absensi Anda dalam hitungan detik.</p>
+          <div class="rc-top"><div class="rc-icon"><i class="fas fa-user-graduate"></i></div><div class="rc-tag">Mahasiswa</div></div>
+          <h4>Isi Absensi</h4>
+          <p>Isi data diri dan dapatkan QR Code absensi Anda dalam hitungan detik.</p>
           <div class="rc-features">
             <div><i class="fas fa-check"></i> Buat QR unik per absensi</div>
             <div><i class="fas fa-check"></i> Data langsung tersimpan</div>
@@ -719,12 +466,9 @@ function viewLanding(){
           <div class="rc-cta">Mulai Absen <i class="fas fa-arrow-right"></i></div>
         </div>
         <div class="role-card" data-role="admin" onclick="startAdmin()">
-          <div class="rc-top">
-            <div class="rc-icon"><i class="fas fa-chalkboard-teacher"></i></div>
-            <div class="rc-tag">Admin / Dosen</div>
-          </div>
+          <div class="rc-top"><div class="rc-icon"><i class="fas fa-chalkboard-teacher"></i></div><div class="rc-tag">Admin / Dosen</div></div>
           <h4>Kelola & Pantau</h4>
-          <p>Buka sesi absensi, pindai QR mahasiswa, dan pantau kehadiran secara real-time.</p>
+          <p>Pindai QR mahasiswa dan pantau kehadiran secara real-time.</p>
           <div class="rc-features">
             <div><i class="fas fa-check"></i> Dashboard real-time</div>
             <div><i class="fas fa-check"></i> Scan QR & validasi otomatis</div>
@@ -737,33 +481,16 @@ function viewLanding(){
   `;
 }
 
-/* =========================================================
-   STUDENT
-   ========================================================= */
 function startStudent(){ state.user='student'; render('student-form'); }
 
 function viewStudentForm(){
   const today = new Date().toISOString().slice(0,10);
   return `
     <nav class="navbar">
-      <div class="nav-logo">
-        <div class="logo-mark"><i class="fas fa-qrcode"></i></div>
-        <div><h1>Smart Attendance</h1><p>Portal Mahasiswa</p></div>
-      </div>
-      <div class="nav-links">
-        <a href="#" onclick="event.preventDefault();render('landing')"><i class="fas fa-arrow-left"></i> Kembali</a>
-      </div>
+      <div class="nav-logo"><div class="logo-mark"><i class="fas fa-qrcode"></i></div><div><h1>Smart Attendance</h1><p>Portal Mahasiswa</p></div></div>
+      <div class="nav-links"><a href="#" onclick="event.preventDefault();render('landing')"><i class="fas fa-arrow-left"></i> Kembali</a></div>
     </nav>
-
     <div class="page-shell">
-      <div class="page-topbar">
-        <div class="breadcrumb">
-          <i class="fas fa-house" style="color:var(--royal-500)"></i>
-          Beranda <i class="fas fa-chevron-right" style="font-size:10px"></i>
-          <strong>Absensi Mahasiswa</strong>
-        </div>
-      </div>
-
       <div class="stepper">
         <div class="step active"><span class="num">1</span> Data Mahasiswa</div>
         <div class="step-line"></div>
@@ -771,64 +498,22 @@ function viewStudentForm(){
         <div class="step-line"></div>
         <div class="step"><span class="num">3</span> Selesai</div>
       </div>
-
       <div class="form-card">
         <div class="form-card-head">
           <div class="ic"><i class="fas fa-pen-to-square"></i></div>
-          <div>
-            <h3>Form Absensi Mahasiswa</h3>
-            <p>Lengkapi data di bawah ini untuk membuat QR absensi</p>
-          </div>
+          <div><h3>Form Absensi Mahasiswa</h3><p>${MATAKULIAH}</p></div>
         </div>
-
-        <div class="alert alert-error" id="formAlert">
-          <i class="fas fa-circle-exclamation" style="margin-top:2px"></i>
-          <span></span>
-        </div>
-
+        <div class="alert alert-error" id="formAlert"><i class="fas fa-circle-exclamation" style="margin-top:2px"></i><span></span></div>
         <form onsubmit="submitStudent(event)">
           <div class="field-row">
-            <div class="field">
-              <label>NPM <span class="req">*</span></label>
-              <div class="input-wrap">
-                <i class="fas fa-id-card pre"></i>
-                <input class="input" id="inNpm" placeholder="Contoh: 2210012345" autocomplete="off">
-              </div>
-            </div>
-            <div class="field">
-              <label>Nama Lengkap <span class="req">*</span></label>
-              <div class="input-wrap">
-                <i class="fas fa-user pre"></i>
-                <input class="input" id="inNama" placeholder="Nama sesuai KTM" autocomplete="off">
-              </div>
-            </div>
+            <div class="field"><label>NPM <span class="req">*</span></label><div class="input-wrap"><i class="fas fa-id-card pre"></i><input class="input" id="inNpm" placeholder="Contoh: 2210012345" autocomplete="off"></div></div>
+            <div class="field"><label>Nama Lengkap <span class="req">*</span></label><div class="input-wrap"><i class="fas fa-user pre"></i><input class="input" id="inNama" placeholder="Nama sesuai KTM" autocomplete="off"></div></div>
           </div>
-
-          <div class="field">
-            <label>Mata Kuliah <span class="req">*</span></label>
-            <div class="input-wrap">
-              <i class="fas fa-book-open pre"></i>
-              <select class="input" id="inMatkul">
-                <option value="">-- Pilih Mata Kuliah --</option>
-                ${MATAKULIAH.map(m=>`<option value="${m}">${m}</option>`).join('')}
-              </select>
-            </div>
-          </div>
-
-          <button type="submit" class="btn btn-primary btn-lg btn-block" id="btnSubmitStudent" style="margin-top:8px">
-            <i class="fas fa-qrcode"></i> Simpan & Buat QR
-          </button>
+          <button type="submit" class="btn btn-primary btn-lg btn-block" id="btnSubmitStudent" style="margin-top:8px"><i class="fas fa-qrcode"></i> Simpan & Buat QR</button>
         </form>
-
         <div style="margin-top:24px;padding-top:22px;border-top:1px dashed var(--line);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
-          <div style="display:flex;gap:10px;align-items:center;font-size:12.5px;color:var(--muted)">
-            <i class="fas fa-calendar-day" style="color:var(--royal-500);font-size:14px"></i>
-            Tanggal: <strong style="color:var(--navy-800);font-weight:600">${formatTanggal(today)}</strong>
-          </div>
-          <div style="display:flex;gap:10px;align-items:center;font-size:12.5px;color:var(--muted)">
-            <i class="fas fa-shield-halved" style="color:var(--green);font-size:14px"></i>
-            Data aman & terenkripsi
-          </div>
+          <div style="display:flex;gap:10px;align-items:center;font-size:12.5px;color:var(--muted)"><i class="fas fa-calendar-day" style="color:var(--royal-500)"></i> Tanggal: <strong style="color:var(--navy-800)">${formatTanggal(today)}</strong></div>
+          <div style="display:flex;gap:10px;align-items:center;font-size:12.5px;color:var(--muted)"><i class="fas fa-shield-halved" style="color:var(--green)"></i> Data aman & terenkripsi</div>
         </div>
       </div>
     </div>
@@ -839,64 +524,33 @@ async function submitStudent(e){
   e.preventDefault();
   const npm = document.getElementById('inNpm').value.trim();
   const nama = document.getElementById('inNama').value.trim();
-  const matkul = document.getElementById('inMatkul').value;
   const alertBox = document.getElementById('formAlert');
-
-  const showError = (msg) => {
-    alertBox.classList.add('show');
-    alertBox.querySelector('span').textContent = msg;
-    toast(msg, 'error', 'Validasi Gagal');
-  };
-
+  const showError = (msg) => { alertBox.classList.add('show'); alertBox.querySelector('span').textContent = msg; toast(msg, 'error', 'Validasi Gagal'); };
   if(!npm) return showError('NPM wajib diisi');
   if(!/^\d{6,}$/.test(npm)) return showError('NPM minimal 6 digit angka');
   if(!nama) return showError('Nama lengkap wajib diisi');
   if(nama.length < 3) return showError('Nama minimal 3 karakter');
-  if(!matkul) return showError('Pilih mata kuliah terlebih dahulu');
-
   alertBox.classList.remove('show');
-
   const btn = document.getElementById('btnSubmitStudent');
   btn.disabled = true;
   btn.innerHTML = '<div class="spinner" style="width:16px;height:16px;border-width:2px;margin:0;border-color:rgba(255,255,255,.4);border-top-color:#fff"></div> Menyimpan...';
-
   const today = new Date().toISOString().slice(0,10);
   const waktu = new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
-
-  const payload = {
-    action:'absen',
-    data:{ npm, nama, matakuliah:matkul, tanggal:today, pertemuan:hitungPertemuan(today), waktu, status:'Hadir' }
-  };
-
-  let apiSuccess = false;
+  const payload = { action:'absen', data:{ npm, nama, matakuliah:MATAKULIAH, tanggal:today, pertemuan:hitungPertemuan(today), waktu, status:'Hadir' } };
   try{
-    const res = await fetch(API_URL,{
-      method:'POST',
-      body: JSON.stringify(payload),
-      headers:{'Content-Type':'text/plain;charset=utf-8'}
-    });
+    const res = await fetch(API_URL, { method:'POST', body: JSON.stringify(payload), headers:{'Content-Type':'text/plain;charset=utf-8'} });
     const json = await res.json();
-
-    if(json.status === 'success'){
-      apiSuccess = true;
-      toast('QR absensi berhasil dibuat!', 'success', 'Absensi Tercatat');
-    } else if(json.status === 'duplicate'){
+    if(json.status === 'success'){ toast('QR absensi berhasil dibuat!', 'success', 'Absensi Tercatat'); }
+    else if(json.status === 'duplicate'){
       btn.disabled = false;
       btn.innerHTML = '<i class="fas fa-qrcode"></i> Simpan & Buat QR';
-      return showError(json.message || 'Anda sudah absen pada mata kuliah ini');
-    } else {
-      // Server error → tetap lanjut dengan mode demo
-      console.warn('Server error:', json.message);
-      toast('Server error, menggunakan mode demo', 'warning', 'Mode Demo');
-    }
+      return showError(json.message || 'Anda sudah absen hari ini');
+    } else { toast(json.message || 'Server error', 'warning'); }
   } catch(err){
-    console.warn('API offline, mode demo:', err);
-    toast('Mode demo: QR dibuat tanpa simpan ke Sheets', 'warning', 'Offline');
+    console.warn('Offline mode:', err);
+    toast('Mode demo: QR dibuat tanpa simpan', 'warning', 'Offline');
   }
-
-  // Simpan data & lanjut ke halaman QR
-  state.lastAbsen = { npm, nama, matakuliah:matkul, tanggal:today, pertemuan:hitungPertemuan(today), apiSuccess };
-
+  state.lastAbsen = { npm, nama, matakuliah:MATAKULIAH, tanggal:today, pertemuan:hitungPertemuan(today) };
   btn.disabled = false;
   btn.innerHTML = '<i class="fas fa-qrcode"></i> Simpan & Buat QR';
   render('student-qr');
@@ -906,16 +560,12 @@ function viewStudentQR(){
   const d = state.lastAbsen || {};
   return `
     <nav class="navbar">
-      <div class="nav-logo">
-        <div class="logo-mark"><i class="fas fa-qrcode"></i></div>
-        <div><h1>Smart Attendance</h1><p>Portal Mahasiswa</p></div>
-      </div>
+      <div class="nav-logo"><div class="logo-mark"><i class="fas fa-qrcode"></i></div><div><h1>Smart Attendance</h1><p>Portal Mahasiswa</p></div></div>
       <div class="nav-links">
         <a href="#" onclick="event.preventDefault();render('student-form')"><i class="fas fa-rotate-right"></i> Absen Lagi</a>
         <a href="#" onclick="event.preventDefault();render('landing')"><i class="fas fa-house"></i> Beranda</a>
       </div>
     </nav>
-
     <div class="page-shell">
       <div class="stepper" style="margin-top:8px">
         <div class="step done"><span class="num"><i class="fas fa-check" style="font-size:10px"></i></span> Data Mahasiswa</div>
@@ -924,17 +574,9 @@ function viewStudentQR(){
         <div class="step-line done"></div>
         <div class="step active"><span class="num">3</span> Selesai</div>
       </div>
-
       <div class="qr-result" style="margin-top:24px">
         <div class="qr-ticket">
-          <div class="tick-head">
-            <div class="tick-icon"><i class="fas fa-check"></i></div>
-            <div>
-              <h3>Absensi Berhasil</h3>
-              <p>QR Code siap dipindai oleh Admin</p>
-            </div>
-          </div>
-
+          <div class="tick-head"><div class="tick-icon"><i class="fas fa-check"></i></div><div><h3>Absensi Berhasil</h3><p>QR Code siap dipindai oleh Admin</p></div></div>
           <div class="ticket-info">
             <div class="trow"><span>NPM</span><span>${d.npm||'-'}</span></div>
             <div class="trow"><span>Nama</span><span>${d.nama||'-'}</span></div>
@@ -942,13 +584,11 @@ function viewStudentQR(){
             <div class="trow"><span>Tanggal</span><span>${formatTanggalShort(d.tanggal)}</span></div>
             <div class="trow"><span>Pertemuan</span><span>${d.pertemuan||'-'}</span></div>
           </div>
-
           <div class="qr-holder">
             <div id="qrcode"></div>
             <div class="qr-hint"><i class="fas fa-camera"></i> Pindai QR ini menggunakan kamera Admin</div>
           </div>
         </div>
-
         <div class="qr-side-info">
           <div class="info-card">
             <h4><i class="fas fa-circle-info"></i> Petunjuk</h4>
@@ -958,18 +598,14 @@ function viewStudentQR(){
               <li><i class="fas fa-check"></i> Pastikan layar dalam kondisi terang agar mudah dipindai.</li>
             </ul>
           </div>
-
           <div class="info-card">
             <h4><i class="fas fa-shield-halved"></i> Keamanan Data</h4>
-            <p class="small-muted">Data absensi Anda tersimpan secara aman di Google Sheets dan hanya dapat diakses oleh Admin/Dosen yang berwenang.</p>
+            <p class="small-muted">Data absensi Anda tersimpan aman di Google Sheets dan hanya dapat diakses oleh Admin/Dosen.</p>
           </div>
-
           <div class="info-card" style="background:linear-gradient(135deg,var(--powder-100),#fff);border-color:var(--powder-200)">
             <h4><i class="fas fa-clock"></i> Absen Lagi?</h4>
-            <p class="small-muted" style="margin-bottom:14px">Anda dapat membuat QR baru untuk mata kuliah lain.</p>
-            <button class="btn btn-outline btn-sm btn-block" onclick="render('student-form')">
-              <i class="fas fa-plus"></i> Buat QR Baru
-            </button>
+            <p class="small-muted" style="margin-bottom:14px">Anda dapat membuat QR baru jika diperlukan.</p>
+            <button class="btn btn-outline btn-sm btn-block" onclick="render('student-form')"><i class="fas fa-plus"></i> Buat QR Baru</button>
           </div>
         </div>
       </div>
@@ -981,75 +617,33 @@ async function renderQR(){
   const d = state.lastAbsen || {};
   const box = document.getElementById('qrcode');
   if(!box) return;
-
-  // Validasi data
-  if(!d.npm || !d.matakuliah || !d.tanggal){
-    box.innerHTML = '<p style="color:var(--red);font-size:13px;padding:20px;text-align:center">Data absensi tidak lengkap.<br>Silakan ulangi.</p>';
-    return;
-  }
-
-  const qrContent = JSON.stringify({
-    npm: d.npm,
-    matakuliah: d.matakuliah,
-    tanggal: d.tanggal,
-    t: Date.now()
-  });
-
-  await generateQR(box, qrContent, 180);
+  if(!d.npm || !d.tanggal){ box.innerHTML = '<p style="color:var(--red);font-size:13px;padding:20px;text-align:center">Data tidak lengkap.</p>'; return; }
+  await generateQR(box, JSON.stringify({npm:d.npm, matakuliah:d.matakuliah, tanggal:d.tanggal, t:Date.now()}), 180);
 }
 
-/* =========================================================
-   ADMIN
-   ========================================================= */
 function startAdmin(){ state.user='admin'; render('admin-login'); }
 
 function viewAdminLogin(){
   return `
     <nav class="navbar">
-      <div class="nav-logo">
-        <div class="logo-mark"><i class="fas fa-qrcode"></i></div>
-        <div><h1>Smart Attendance</h1><p>Portal Admin</p></div>
-      </div>
-      <div class="nav-links">
-        <a href="#" onclick="event.preventDefault();render('landing')"><i class="fas fa-arrow-left"></i> Kembali</a>
-      </div>
+      <div class="nav-logo"><div class="logo-mark"><i class="fas fa-qrcode"></i></div><div><h1>Smart Attendance</h1><p>Portal Admin</p></div></div>
+      <div class="nav-links"><a href="#" onclick="event.preventDefault();render('landing')"><i class="fas fa-arrow-left"></i> Kembali</a></div>
     </nav>
-
     <div class="page-shell" style="max-width:480px">
       <div class="form-card">
         <div class="form-card-head">
           <div class="ic" style="background:linear-gradient(135deg,var(--gold-500),#B8934E);color:#2A1F00"><i class="fas fa-user-shield"></i></div>
-          <div><h3>Login Admin</h3><p>Masuk untuk mengelola sesi absensi</p></div>
+          <div><h3>Login Admin</h3><p>Masuk untuk mengelola absensi</p></div>
         </div>
-
-        <div class="alert alert-error" id="loginAlert">
-          <i class="fas fa-circle-exclamation" style="margin-top:2px"></i>
-          <span></span>
-        </div>
-
+        <div class="alert alert-error" id="loginAlert"><i class="fas fa-circle-exclamation" style="margin-top:2px"></i><span></span></div>
         <form onsubmit="submitAdminLogin(event)">
-          <div class="field">
-            <label>Username</label>
-            <div class="input-wrap">
-              <i class="fas fa-user-shield pre"></i>
-              <input class="input" id="inAdminUser" placeholder="admin" value="admin">
-            </div>
-          </div>
-          <div class="field">
-            <label>Password</label>
-            <div class="input-wrap">
-              <i class="fas fa-key pre"></i>
-              <input class="input" type="password" id="inAdminPass" placeholder="••••••" value="admin123">
-            </div>
-          </div>
-          <button type="submit" class="btn btn-navy btn-lg btn-block" style="margin-top:8px">
-            <i class="fas fa-right-to-bracket"></i> Masuk Dashboard
-          </button>
+          <div class="field"><label>Username</label><div class="input-wrap"><i class="fas fa-user-shield pre"></i><input class="input" id="inAdminUser" placeholder="admin" value="admin"></div></div>
+          <div class="field"><label>Password</label><div class="input-wrap"><i class="fas fa-key pre"></i><input class="input" type="password" id="inAdminPass" placeholder="••••••" value="admin123"></div></div>
+          <button type="submit" class="btn btn-navy btn-lg btn-block" style="margin-top:8px"><i class="fas fa-right-to-bracket"></i> Masuk Dashboard</button>
         </form>
-
         <div style="margin-top:22px;padding:14px 16px;background:var(--powder-100);border-radius:var(--r-md);font-size:12.5px;color:var(--navy-700);display:flex;gap:10px;align-items:flex-start">
           <i class="fas fa-circle-info" style="color:var(--royal-500);margin-top:2px"></i>
-          <span><strong>Demo:</strong> username <code style="background:#fff;padding:2px 8px;border-radius:6px;font-weight:600">admin</code> · password <code style="background:#fff;padding:2px 8px;border-radius:6px;font-weight:600">admin123</code></span>
+          <span><strong>Demo:</strong> admin / admin123</span>
         </div>
       </div>
     </div>
@@ -1061,7 +655,6 @@ function submitAdminLogin(e){
   const u = document.getElementById('inAdminUser').value.trim();
   const p = document.getElementById('inAdminPass').value.trim();
   const alertBox = document.getElementById('loginAlert');
-
   if(u === state.adminUser && p === state.adminPass){
     toast('Selamat datang, Admin!', 'success', 'Login Berhasil');
     render('admin-dash');
@@ -1077,25 +670,16 @@ function viewAdminDash(){
   return `
     <div class="admin-layout">
       <aside class="sidebar">
-        <div class="sb-logo">
-          <div class="mark"><i class="fas fa-qrcode"></i></div>
-          <div><h1>Smart Attendance</h1><p>Admin Panel</p></div>
-        </div>
-        <div class="sb-section-title">Menu Utama</div>
+        <div class="sb-logo"><div class="mark"><i class="fas fa-qrcode"></i></div><div><h1>Smart Attendance</h1><p>Admin Panel</p></div></div>
         <nav class="sb-menu">
           <div class="sb-item active" data-tab="dashboard" onclick="switchTab('dashboard')"><i class="fas fa-chart-pie"></i> Dashboard</div>
-          <div class="sb-item" data-tab="sesi" onclick="switchTab('sesi')"><i class="fas fa-broadcast-tower"></i> Sesi Absensi</div>
           <div class="sb-item" data-tab="kehadiran" onclick="switchTab('kehadiran')"><i class="fas fa-list-check"></i> Data Kehadiran</div>
         </nav>
         <div class="sb-footer">
-          <div class="sb-user">
-            <div class="avatar">AD</div>
-            <div><h5>Administrator</h5><p>Dosen Pengampu</p></div>
-          </div>
+          <div class="sb-user"><div class="avatar">AD</div><div><h5>Administrator</h5><p>Dosen Pengampu</p></div></div>
           <button class="sb-logout" onclick="goLanding()"><i class="fas fa-right-from-bracket"></i> Logout</button>
         </div>
       </aside>
-
       <main class="admin-main">
         <div class="admin-topbar">
           <div class="admin-greeting">
@@ -1115,9 +699,7 @@ function viewAdminDash(){
 
 function switchTab(tab){
   state.adminTab = tab;
-  document.querySelectorAll('.sb-item').forEach(el => {
-    el.classList.toggle('active', el.dataset.tab === tab);
-  });
+  document.querySelectorAll('.sb-item').forEach(el => { el.classList.toggle('active', el.dataset.tab === tab); });
   renderTabContent();
 }
 
@@ -1125,74 +707,54 @@ function renderTabContent(){
   const el = document.getElementById('tabContent');
   if(!el) return;
   if(state.adminTab === 'dashboard') el.innerHTML = viewDashboardTab();
-  else if(state.adminTab === 'sesi') el.innerHTML = viewSesiTab();
   else if(state.adminTab === 'kehadiran') el.innerHTML = viewKehadiranTab();
   setTimeout(() => loadAttendance(), 100);
 }
 
+function bannerHTML(){
+  return `
+    <div class="banner-panel">
+      <div class="banner-left">
+        <div class="banner-badge"><span class="pd"></span> SIAP MENERIMA SCAN</div>
+        <h3>${MATAKULIAH}</h3>
+        <div style="font-size:13.5px;opacity:.85;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <i class="fas fa-calendar"></i> ${formatTanggal(state.selectedDate)}
+          <span style="opacity:.4">·</span>
+          <i class="fas fa-layer-group"></i> ${hitungPertemuan(state.selectedDate)}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
 function viewDashboardTab(){
-  const hadir = state.attendanceCache.filter(a => (a['Status']||a.status)==='Hadir').length;
+  const hadir = state.attendanceCache.filter(a => (a['Status']||a.status)==='Hadir' || (a['Status']||a.status)==='Terlambat').length;
   const total = state.attendanceCache.length || 0;
   const belum = Math.max(0, total - hadir);
   return `
     <div class="summary-grid">
       <div class="summary-card sc-1">
         <div class="sc-head"><div class="sc-ic"><i class="fas fa-user-check"></i></div><div class="sc-trend">Aktif</div></div>
-        <div class="sc-lbl">Total Hadir</div>
-        <div class="sc-val" id="dashHadir">${hadir}</div>
-        <div class="sc-sub">Mahasiswa tercatat hadir</div>
+        <div class="sc-lbl">Total Hadir</div><div class="sc-val" id="dashHadir">${hadir}</div><div class="sc-sub">Mahasiswa tercatat hadir</div>
       </div>
       <div class="summary-card sc-2">
         <div class="sc-head"><div class="sc-ic"><i class="fas fa-user-clock"></i></div></div>
-        <div class="sc-lbl">Belum Hadir</div>
-        <div class="sc-val" id="dashBelum">${belum}</div>
-        <div class="sc-sub">Menunggu kehadiran</div>
+        <div class="sc-lbl">Belum Hadir</div><div class="sc-val" id="dashBelum">${belum}</div><div class="sc-sub">Menunggu kehadiran</div>
       </div>
       <div class="summary-card sc-3">
         <div class="sc-head"><div class="sc-ic"><i class="fas fa-users"></i></div></div>
-        <div class="sc-lbl">Total Mahasiswa</div>
-        <div class="sc-val" id="dashTotal">${total}</div>
-        <div class="sc-sub">Terdaftar di sesi ini</div>
-      </div>
-      <div class="summary-card sc-4">
-        <div class="sc-head"><div class="sc-ic"><i class="fas fa-broadcast-tower"></i></div><div class="sc-trend">${state.sessionActive?'ON':'OFF'}</div></div>
-        <div class="sc-lbl">Sesi Absensi</div>
-        <div class="sc-val" style="font-size:18px">${state.sessionActive?'Aktif':'Tertutup'}</div>
-        <div class="sc-sub">${state.sessionCourse}</div>
+        <div class="sc-lbl">Total Mahasiswa</div><div class="sc-val" id="dashTotal">${total}</div><div class="sc-sub">Terdaftar hari ini</div>
       </div>
     </div>
-
-    <div class="session-panel">
-      <div class="sp-left">
-        <div class="sp-status"><span class="pd ${state.sessionActive?'':'off'}"></span>${state.sessionActive?'Sesi Sedang Berjalan':'Sesi Belum Dibuka'}</div>
-        <h3>${state.sessionCourse}</h3>
-        <div class="sp-sub">
-          <i class="fas fa-calendar"></i> ${formatTanggal(state.sessionDate)}
-          <span style="opacity:.4">·</span>
-          <i class="fas fa-layer-group"></i> ${hitungPertemuan(state.sessionDate)}
-        </div>
-      </div>
-      <div class="sp-right">
-        <button class="btn btn-success" onclick="openSession()" ${state.sessionActive?'disabled':''}><i class="fas fa-play"></i> Buka Sesi</button>
-        <button class="btn btn-danger" onclick="closeSession()" ${!state.sessionActive?'disabled':''}><i class="fas fa-stop"></i> Tutup Sesi</button>
-      </div>
-    </div>
-
+    ${bannerHTML()}
     <div class="toolbar">
       <div class="tool-card">
-        <h4><i class="fas fa-filter"></i> Filter Sesi</h4>
-        <div class="field">
-          <label>Mata Kuliah</label>
-          <select class="input no-icon" id="filterMk" onchange="onFilterChange()">
-            ${MATAKULIAH.map(m=>`<option value="${m}" ${m===state.sessionCourse?'selected':''}>${m}</option>`).join('')}
-          </select>
-        </div>
+        <h4><i class="fas fa-calendar"></i> Pilih Tanggal</h4>
         <div class="field">
           <label>Tanggal</label>
-          <input class="input no-icon" type="date" id="filterTanggal" value="${state.sessionDate}" onchange="onFilterChange()">
+          <input class="input no-icon" type="date" id="filterTanggal" value="${state.selectedDate}" onchange="onFilterChange()">
         </div>
       </div>
-
       <div class="tool-card">
         <h4><i class="fas fa-qrcode"></i> Scan QR Kehadiran</h4>
         <div class="scan-bar">
@@ -1202,58 +764,10 @@ function viewDashboardTab(){
         </div>
         <div style="margin-top:14px;padding:12px 14px;background:var(--powder-100);border-radius:var(--r-md);font-size:12px;color:var(--navy-700);display:flex;gap:9px;align-items:flex-start">
           <i class="fas fa-circle-info" style="color:var(--royal-500);margin-top:2px"></i>
-          <span>Scan QR mahasiswa atau ketik NPM lalu tekan <strong>Enter</strong> untuk mencatat kehadiran.</span>
+          <span>Scan QR atau ketik NPM lalu tekan <strong>Enter</strong> untuk mencatat kehadiran.</span>
         </div>
       </div>
     </div>
-
-    ${renderTableCard()}
-  `;
-}
-
-function viewSesiTab(){
-  return `
-    <div class="session-panel">
-      <div class="sp-left">
-        <div class="sp-status"><span class="pd ${state.sessionActive?'':'off'}"></span>${state.sessionActive?'Sesi Sedang Berjalan':'Sesi Belum Dibuka'}</div>
-        <h3>${state.sessionCourse}</h3>
-        <div class="sp-sub">
-          <i class="fas fa-calendar"></i> ${formatTanggal(state.sessionDate)}
-          <span style="opacity:.4">·</span>
-          <i class="fas fa-layer-group"></i> ${hitungPertemuan(state.sessionDate)}
-        </div>
-      </div>
-      <div class="sp-right">
-        <button class="btn btn-success" onclick="openSession()" ${state.sessionActive?'disabled':''}><i class="fas fa-play"></i> Buka Sesi</button>
-        <button class="btn btn-danger" onclick="closeSession()" ${!state.sessionActive?'disabled':''}><i class="fas fa-stop"></i> Tutup Sesi</button>
-      </div>
-    </div>
-
-    <div class="toolbar">
-      <div class="tool-card">
-        <h4><i class="fas fa-sliders"></i> Pengaturan Sesi</h4>
-        <div class="field">
-          <label>Mata Kuliah</label>
-          <select class="input no-icon" id="filterMk" onchange="onFilterChange()">
-            ${MATAKULIAH.map(m=>`<option value="${m}" ${m===state.sessionCourse?'selected':''}>${m}</option>`).join('')}
-          </select>
-        </div>
-        <div class="field">
-          <label>Tanggal</label>
-          <input class="input no-icon" type="date" id="filterTanggal" value="${state.sessionDate}" onchange="onFilterChange()">
-        </div>
-      </div>
-
-      <div class="tool-card">
-        <h4><i class="fas fa-qrcode"></i> Scan QR Kehadiran</h4>
-        <div class="scan-bar">
-          <i class="fas fa-camera scan-ic"></i>
-          <input id="scanInput" placeholder="Scan / ketik NPM mahasiswa..." autocomplete="off" onkeypress="if(event.key==='Enter')processScan()">
-          <button class="btn btn-primary btn-sm" onclick="processScan()"><i class="fas fa-check"></i> Proses</button>
-        </div>
-      </div>
-    </div>
-
     ${renderTableCard()}
   `;
 }
@@ -1262,32 +776,20 @@ function viewKehadiranTab(){
   return `
     <div class="toolbar">
       <div class="tool-card">
-        <h4><i class="fas fa-filter"></i> Filter Data</h4>
-        <div class="field">
-          <label>Mata Kuliah</label>
-          <select class="input no-icon" id="filterMk" onchange="onFilterChange()">
-            ${MATAKULIAH.map(m=>`<option value="${m}" ${m===state.sessionCourse?'selected':''}>${m}</option>`).join('')}
-          </select>
-        </div>
+        <h4><i class="fas fa-calendar"></i> Pilih Tanggal</h4>
         <div class="field">
           <label>Tanggal</label>
-          <input class="input no-icon" type="date" id="filterTanggal" value="${state.sessionDate}" onchange="onFilterChange()">
+          <input class="input no-icon" type="date" id="filterTanggal" value="${state.selectedDate}" onchange="onFilterChange()">
         </div>
       </div>
-
       <div class="tool-card">
         <h4><i class="fas fa-magnifying-glass"></i> Cari Mahasiswa</h4>
         <div class="scan-bar">
           <i class="fas fa-search scan-ic"></i>
           <input id="searchInput" placeholder="Cari nama atau NPM..." autocomplete="off" oninput="filterTable()">
         </div>
-        <div style="margin-top:14px;font-size:12px;color:var(--muted);display:flex;gap:8px;align-items:center">
-          <i class="fas fa-circle-info" style="color:var(--royal-500)"></i>
-          Data ditampilkan berdasarkan filter mata kuliah & tanggal.
-        </div>
       </div>
     </div>
-
     ${renderTableCard()}
   `;
 }
@@ -1301,16 +803,7 @@ function renderTableCard(){
       </div>
       <div class="table-scroll">
         <table>
-          <thead>
-            <tr>
-              <th style="width:50px">No</th>
-              <th>Mahasiswa</th>
-              <th>NPM</th>
-              <th>Mata Kuliah</th>
-              <th>Waktu Scan</th>
-              <th>Status</th>
-            </tr>
-          </thead>
+          <thead><tr><th style="width:50px">No</th><th>Mahasiswa</th><th>NPM</th><th>Mata Kuliah</th><th>Waktu Scan</th><th>Status</th></tr></thead>
           <tbody id="tableBody">
             <tr><td colspan="6"><div class="skeleton"><div class="spinner"></div><p style="font-size:13px;color:var(--muted)">Memuat data absensi...</p></div></td></tr>
           </tbody>
@@ -1323,44 +816,21 @@ function renderTableCard(){
 function initAdmin(){ renderTabContent(); }
 
 async function loadAttendance(){
-  const mk = document.getElementById('filterMk')?.value || state.sessionCourse;
-  const tgl = document.getElementById('filterTanggal')?.value || state.sessionDate;
-  state.sessionCourse = mk;
-  state.sessionDate = tgl;
-
+  const tgl = document.getElementById('filterTanggal')?.value || state.selectedDate;
+  state.selectedDate = tgl;
   const tbody = document.getElementById('tableBody');
-  if(tbody) tbody.innerHTML = `<tr><td colspan="6"><div class="skeleton"><div class="spinner"></div><p style="font-size:13px;color:var(--muted)">Memuat data absensi...</p></div></td></tr>`;
-
+  if(tbody) tbody.innerHTML = `<tr><td colspan="6"><div class="skeleton"><div class="spinner"></div><p style="font-size:13px;color:var(--muted)">Memuat data...</p></div></td></tr>`;
   try{
-    const url = `${API_URL}?action=getRekap&matakuliah=${encodeURIComponent(mk)}&tanggal=${tgl}`;
-    const res = await fetch(url);
+    const res = await fetch(`${API_URL}?action=getRekap&tanggal=${encodeURIComponent(tgl)}`);
     const json = await res.json();
-    if(json.status === 'success'){
-      state.attendanceCache = json.data || [];
-      await checkSessionStatus(mk, tgl);
-    } else throw new Error(json.message);
-  } catch(err){
-    console.warn('API offline, demo data:', err);
-    if(state.attendanceCache.length === 0) {
-      state.attendanceCache = getDemoData(mk, tgl);
-    }
-    state.sessionActive = true;
+    if(json.status === 'success'){ state.attendanceCache = json.data || []; }
+    else state.attendanceCache = [];
+  }catch(e){
+    console.error('Rekap error:', e);
+    state.attendanceCache = [];
   }
-
   renderTable();
   updateSummary();
-  updateSessionPanel();
-}
-
-function getDemoData(mk, tgl){
-  return [
-    { NPM:'2210012345', Nama:'Andi Pratama',    'Mata Kuliah':mk, Tanggal:tgl, Waktu:'08:15', Status:'Hadir' },
-    { NPM:'2210012346', Nama:'Budi Santoso',    'Mata Kuliah':mk, Tanggal:tgl, Waktu:'08:18', Status:'Hadir' },
-    { NPM:'2210012347', Nama:'Citra Dewi',      'Mata Kuliah':mk, Tanggal:tgl, Waktu:'08:22', Status:'Terlambat' },
-    { NPM:'2210012348', Nama:'Dimas Firmansyah','Mata Kuliah':mk, Tanggal:tgl, Waktu:'08:25', Status:'Hadir' },
-    { NPM:'2210012349', Nama:'Eka Wulandari',   'Mata Kuliah':mk, Tanggal:tgl, Waktu:'08:30', Status:'Hadir' },
-    { NPM:'2210012350', Nama:'Fajar Nugroho',   'Mata Kuliah':mk, Tanggal:tgl, Waktu:'08:34', Status:'Terlambat' }
-  ];
 }
 
 function renderTable(){
@@ -1368,21 +838,11 @@ function renderTable(){
   if(!tbody) return;
   const data = state.attendanceCache || [];
   const countEl = document.getElementById('tableCount');
-  if(countEl) countEl.textContent = `${data.length} Mahasiswa`;
-
+  if(countEl) countEl.textContent = data.length + ' Mahasiswa';
   if(data.length === 0){
-    tbody.innerHTML = `
-      <tr><td colspan="6">
-        <div class="empty-state">
-          <div class="es-icon"><i class="fas fa-inbox"></i></div>
-          <h4>Belum Ada Kehadiran</h4>
-          <p>Belum ada mahasiswa yang tercatat hadir pada mata kuliah <strong>${state.sessionCourse}</strong> tanggal <strong>${formatTanggalShort(state.sessionDate)}</strong>.</p>
-          <button class="btn btn-primary btn-sm" onclick="document.getElementById('scanInput')?.focus()"><i class="fas fa-qrcode"></i> Scan QR Mahasiswa</button>
-        </div>
-      </td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><div class="es-icon"><i class="fas fa-inbox"></i></div><h4>Belum Ada Kehadiran</h4><p>Belum ada mahasiswa yang tercatat hadir pada <strong>${formatTanggalShort(state.selectedDate)}</strong>.</p><button class="btn btn-primary btn-sm" onclick="document.getElementById('scanInput')?.focus()"><i class="fas fa-qrcode"></i> Scan QR Mahasiswa</button></div></td></tr>`;
     return;
   }
-
   const avatarClasses = ['','a2','a3','a4'];
   tbody.innerHTML = data.map((item, i) => {
     const nama = item['Nama'] || item.nama || '-';
@@ -1395,29 +855,19 @@ function renderTable(){
     if(status === 'Hadir') badge = '<span class="badge badge-hadir"><i class="fas fa-circle"></i> Hadir</span>';
     else if(status === 'Terlambat') badge = '<span class="badge badge-telat"><i class="fas fa-circle"></i> Terlambat</span>';
     else badge = '<span class="badge badge-absen"><i class="fas fa-circle"></i> Belum Hadir</span>';
-
-    return `<tr>
-      <td>${i+1}</td>
-      <td><div class="avatar-cell"><div class="avatar ${av}">${initialOf(nama)}</div><div class="name">${nama}</div></div></td>
-      <td><strong style="color:var(--navy-900)">${npm}</strong></td>
-      <td>${mk}</td>
-      <td>${waktu}</td>
-      <td>${badge}</td>
-    </tr>`;
+    return `<tr><td>${i+1}</td><td><div class="avatar-cell"><div class="avatar ${av}">${initialOf(nama)}</div><div class="name">${nama}</div></div></td><td><strong style="color:var(--navy-900)">${npm}</strong></td><td>${mk}</td><td>${waktu}</td><td>${badge}</td></tr>`;
   }).join('');
 }
 
 function filterTable(){
   const q = (document.getElementById('searchInput')?.value || '').toLowerCase().trim();
-  const rows = document.querySelectorAll('#tableBody tr');
-  rows.forEach(row => {
-    const txt = row.textContent.toLowerCase();
-    row.style.display = (!q || txt.includes(q)) ? '' : 'none';
+  document.querySelectorAll('#tableBody tr').forEach(row => {
+    row.style.display = (!q || row.textContent.toLowerCase().includes(q)) ? '' : 'none';
   });
 }
 
 function updateSummary(){
-  const hadir = state.attendanceCache.filter(a => (a['Status']||a.status)==='Hadir').length;
+  const hadir = state.attendanceCache.filter(a => (a['Status']||a.status)==='Hadir' || (a['Status']||a.status)==='Terlambat').length;
   const total = state.attendanceCache.length;
   const belum = Math.max(0, total - hadir);
   const setEl = (id, v) => { const el = document.getElementById(id); if(el) el.textContent = v; };
@@ -1426,102 +876,32 @@ function updateSummary(){
   setEl('dashTotal', total);
 }
 
-function updateSessionPanel(){
-  const status = document.querySelector('.sp-status');
-  if(status) status.innerHTML = `<span class="pd ${state.sessionActive?'':'off'}"></span>${state.sessionActive?'Sesi Sedang Berjalan':'Sesi Belum Dibuka'}`;
-}
-
 function onFilterChange(){
-  const mk = document.getElementById('filterMk').value;
-  const tgl = document.getElementById('filterTanggal').value;
-  state.sessionCourse = mk;
-  state.sessionDate = tgl;
+  state.selectedDate = document.getElementById('filterTanggal').value;
   loadAttendance();
-}
-
-async function openSession(){
-  const mk = document.getElementById('filterMk')?.value || state.sessionCourse;
-  const tgl = document.getElementById('filterTanggal')?.value || state.sessionDate;
-  try{
-    await fetch(API_URL,{
-      method:'POST',
-      body: JSON.stringify({action:'bukaSesi', matakuliah:mk, tanggal:tgl}),
-      headers:{'Content-Type':'text/plain;charset=utf-8'}
-    });
-  }catch(e){ console.warn(e); }
-  state.sessionActive = true;
-  state.sessionCourse = mk;
-  state.sessionDate = tgl;
-  toast(`Sesi absensi dibuka untuk ${mk}`, 'success', 'Sesi Aktif');
-  render('admin-dash');
-}
-
-async function closeSession(){
-  const mk = document.getElementById('filterMk')?.value || state.sessionCourse;
-  const tgl = document.getElementById('filterTanggal')?.value || state.sessionDate;
-  try{
-    await fetch(API_URL,{
-      method:'POST',
-      body: JSON.stringify({action:'tutupSesi', matakuliah:mk, tanggal:tgl}),
-      headers:{'Content-Type':'text/plain;charset=utf-8'}
-    });
-  }catch(e){ console.warn(e); }
-  state.sessionActive = false;
-  toast('Sesi absensi ditutup', 'warning', 'Sesi Ditutup');
-  render('admin-dash');
-}
-
-async function checkSessionStatus(mk, tgl){
-  try{
-    const res = await fetch(`${API_URL}?action=getSesi&matakuliah=${encodeURIComponent(mk)}&tanggal=${tgl}`);
-    const json = await res.json();
-    if(json.status === 'success') state.sessionActive = (json.sesi === 'AKTIF');
-  }catch(e){}
 }
 
 async function processScan(){
   const input = document.getElementById('scanInput');
   const npm = input.value.trim();
-  if(!npm){ toast('Masukkan NPM atau scan QR', 'warning'); input.focus(); return; }
-  if(!state.sessionActive){ toast('Buka sesi absensi terlebih dahulu', 'error'); return; }
-
-  const mk = document.getElementById('filterMk').value;
-  const tgl = document.getElementById('filterTanggal').value;
+  if(!npm){ toast('Masukkan NPM', 'warning'); input.focus(); return; }
+  const tgl = document.getElementById('filterTanggal')?.value || state.selectedDate;
 
   input.disabled = true;
   try{
-    const res = await fetch(API_URL,{
+    const res = await fetch(API_URL, {
       method:'POST',
-      body: JSON.stringify({action:'scanQR', npm, matakuliah:mk, tanggal:tgl}),
-      headers:{'Content-Type':'text/plain;charset=utf-8'}
+      headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body: JSON.stringify({action:'scanQR', npm, tanggal:tgl})
     });
     const json = await res.json();
-
-    if(json.status === 'success'){
-      toast(json.message || 'Kehadiran berhasil dicatat', 'success');
-      input.value = '';
-      await loadAttendance();
-    } else if(json.status === 'duplicate'){
-      toast(json.message || 'Mahasiswa sudah hadir', 'warning');
-      input.value = '';
-    } else {
-      toast(json.message || 'QR tidak valid', 'error');
-    }
-  } catch(err){
-    const existing = state.attendanceCache.find(a => (a['NPM']||a.npm) === npm);
-    if(existing){
-      toast(`${existing['Nama']||existing.nama} sudah tercatat hadir`, 'warning');
-    } else {
-      state.attendanceCache.push({
-        NPM:npm, Nama:'Mahasiswa '+npm, 'Mata Kuliah':mk, Tanggal:tgl,
-        Waktu:new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'}),
-        Status:'Hadir'
-      });
-      renderTable();
-      updateSummary();
-      toast('Kehadiran berhasil dicatat (demo)', 'success');
-    }
-    input.value = '';
+    console.log('📥 Scan:', json);
+    if(json.status === 'success'){ toast(json.message, 'success'); input.value = ''; await loadAttendance(); }
+    else if(json.status === 'duplicate'){ toast(json.message, 'warning'); input.value = ''; }
+    else { toast(json.message, 'error'); }
+  }catch(e){
+    console.error('Scan error:', e);
+    toast('Error: ' + e.message, 'error');
   } finally {
     input.disabled = false;
     input.focus();
