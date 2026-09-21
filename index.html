@@ -7,6 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
 <style>
 :root{
   --navy-900:#0A1226;--navy-800:#101A33;--navy-700:#1B2A4E;
@@ -42,6 +43,8 @@ a{color:inherit;text-decoration:none}
 .btn-outline:hover{border-color:var(--royal-400);color:var(--royal-500);background:var(--powder-100)}
 .btn-navy{background:linear-gradient(135deg,var(--navy-800),var(--navy-700));color:#fff;box-shadow:0 10px 24px -10px rgba(16,26,51,.7)}
 .btn-navy:hover{transform:translateY(-2px)}
+.btn-danger{background:linear-gradient(135deg,#E5484D,#C93A3E);color:#fff}
+.btn-danger:hover{transform:translateY(-2px)}
 .btn-block{width:100%}
 .btn-sm{padding:9px 16px;font-size:12.5px}
 .btn-lg{padding:16px 30px;font-size:15px}
@@ -53,7 +56,7 @@ a{color:inherit;text-decoration:none}
 .nav-logo h1{font-size:16px;font-weight:700;color:var(--navy-800)}
 .nav-logo p{font-size:11px;color:var(--muted);font-weight:500}
 .nav-links{display:flex;gap:6px;align-items:center}
-.nav-links a{padding:9px 16px;border-radius:var(--r-pill);font-size:13.5px;font-weight:500;color:var(--ink-soft);transition:all .2s}
+.nav-links a{padding:9px 16px;border-radius:var(--r-pill);font-size:13.5px;font-weight:500;color:var(--ink-soft);transition:all .2s;cursor:pointer}
 .nav-links a:hover{color:var(--navy-800);background:var(--powder-100)}
 
 .hero{max-width:1280px;margin:0 auto;padding:64px 40px 40px;display:grid;grid-template-columns:1.05fr 1fr;gap:56px;align-items:center}
@@ -145,6 +148,8 @@ a{color:inherit;text-decoration:none}
 .alert{display:none;gap:10px;padding:14px 18px;border-radius:var(--r-md);font-size:13.5px;margin-bottom:22px;align-items:flex-start}
 .alert.show{display:flex}
 .alert-error{background:var(--red-soft);color:#8A2024;border:1px solid #F8C8C8}
+.alert-info{background:var(--powder-100);color:var(--navy-700);border:1px solid var(--powder-200)}
+.alert-success{background:var(--green-soft);color:#0E7A47;border:1px solid #A7E6C6}
 
 .qr-result{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start}
 .qr-ticket{background:linear-gradient(160deg,var(--navy-800) 0%,var(--navy-700) 60%,var(--royal-500) 140%);border-radius:var(--r-2xl);padding:32px;color:#fff;box-shadow:var(--sh-lg)}
@@ -158,10 +163,10 @@ a{color:inherit;text-decoration:none}
 .ticket-info .trow span:first-child{opacity:.7;font-weight:500}
 .ticket-info .trow span:last-child{font-weight:600;text-align:right;max-width:65%}
 .qr-holder{background:#fff;border-radius:var(--r-xl);padding:22px;text-align:center;min-height:250px;display:flex;flex-direction:column;align-items:center;justify-content:center}
-#qrcode{display:inline-block;padding:12px;background:#fff;border-radius:16px;min-height:204px;min-width:204px;display:flex;align-items:center;justify-content:center}
+#qrcode{display:inline-flex;padding:12px;background:#fff;border-radius:16px;min-height:204px;min-width:204px;align-items:center;justify-content:center}
 #qrcode canvas, #qrcode img{display:block;border-radius:8px;max-width:100%;height:auto}
 .qr-holder .qr-hint{font-size:11.5px;color:var(--muted);margin-top:12px;display:flex;align-items:center;justify-content:center;gap:6px;font-weight:500}
-.qr-holder .qr-loading{display:flex;flex-direction:column;align-items:center;gap:10px;color:var(--muted);font-size:12.5px}
+.qr-loading{display:flex;flex-direction:column;align-items:center;gap:10px;color:var(--muted);font-size:12.5px}
 .qr-loading .spinner{width:32px;height:32px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--royal-500);animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .qr-side-info{display:flex;flex-direction:column;gap:16px}
@@ -172,6 +177,18 @@ a{color:inherit;text-decoration:none}
 .info-card li{display:flex;gap:10px;font-size:13px;color:var(--ink-soft);line-height:1.5}
 .info-card li i{color:var(--green);font-size:14px;margin-top:2px;flex-shrink:0}
 .info-card .small-muted{font-size:12.5px;color:var(--muted);line-height:1.6}
+
+.video-container{position:relative;width:100%;border-radius:var(--r-lg);overflow:hidden;background:#000;aspect-ratio:1/1;box-shadow:var(--sh-lg);border:2px solid var(--navy-800)}
+.video-container video{width:100%;height:100%;object-fit:cover;display:block}
+.scan-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
+.scan-frame{position:relative;width:70%;aspect-ratio:1/1}
+.scan-frame .corner{position:absolute;width:36px;height:36px;border:3px solid #4A6FE0;box-shadow:0 0 14px rgba(74,111,224,.9)}
+.corner.tl{top:0;left:0;border-right:0;border-bottom:0;border-top-left-radius:14px}
+.corner.tr{top:0;right:0;border-left:0;border-bottom:0;border-top-right-radius:14px}
+.corner.bl{bottom:0;left:0;border-right:0;border-top:0;border-bottom-left-radius:14px}
+.corner.br{bottom:0;right:0;border-left:0;border-top:0;border-bottom-right-radius:14px}
+.scan-line{position:absolute;left:8%;right:8%;height:2px;background:linear-gradient(90deg,transparent,#4A6FE0,transparent);box-shadow:0 0 14px 2px rgba(74,111,224,.9);animation:scanMove 2.2s ease-in-out infinite}
+@keyframes scanMove{0%,100%{top:12%;opacity:.4}50%{top:88%;opacity:1}}
 
 .admin-layout{display:grid;grid-template-columns:260px 1fr;min-height:100vh}
 .sidebar{background:linear-gradient(180deg,var(--navy-900) 0%,var(--navy-800) 60%,#15224A 100%);color:#fff;padding:28px 20px;display:flex;flex-direction:column;gap:24px;position:sticky;top:0;height:100vh;overflow-y:auto}
@@ -226,11 +243,6 @@ a{color:inherit;text-decoration:none}
 .tool-card .field label{font-size:12px;margin-bottom:6px}
 .tool-card .input{padding:12px 16px 12px 42px;font-size:13.5px;border-radius:14px}
 .tool-card .input.no-icon{padding-left:16px}
-.scan-bar{display:flex;gap:8px;align-items:center;background:var(--off-white);border:1.5px solid var(--line);border-radius:var(--r-md);padding:6px 6px 6px 16px;transition:all .2s}
-.scan-bar:focus-within{border-color:var(--royal-400);background:#fff;box-shadow:0 0 0 4px rgba(43,78,186,.1)}
-.scan-bar i.scan-ic{color:var(--royal-500);font-size:15px}
-.scan-bar input{flex:1;border:none;background:transparent;outline:none;font-size:13.5px;padding:10px 0;color:var(--ink);font-weight:500}
-.scan-bar input::placeholder{color:#A5B0C5;font-weight:400}
 
 .table-card{background:#fff;border:1.5px solid var(--line);border-radius:var(--r-xl);overflow:hidden;box-shadow:var(--sh-sm)}
 .table-head{padding:20px 24px;display:flex;justify-content:space-between;align-items:center;border-bottom:1.5px solid var(--line-soft);gap:14px;flex-wrap:wrap}
@@ -321,21 +333,62 @@ tbody tr:last-child td{border-bottom:none}
 <div id="app"></div>
 
 <script>
-const API_URL = 'https://script.google.com/macros/s/AKfycbzJzOPuY7QRj7FcZfEoX_JLV82i76CjxBbfu1oTi29kEl91zaWa2RDgobWRLYYAbGN0WA/exec';
-
+/*******************************************************
+ * CONFIG & STATE
+ *******************************************************/
 const MATAKULIAH = 'Rekayasa Perangkat Lunak II';
 
+// ⚠️ GANTI DENGAN URL DEPLOY APPS SCRIPT ANDA
+const API_URL = 'https://script.google.com/macros/s/AKfycbyqpXG9Nctdk4JKLCjvuDZN71rHPz39AzZ3wIuVHSH0fE5tMvDZHUskh2IYWLilINVw/exec';
+
+// Deteksi page dari URL query string (bisa jalan di localhost / hosting apa saja)
+const SERVER_PAGE = (function(){
+  const params = new URLSearchParams(window.location.search);
+  return params.get('page') || 'index';
+})();
+
 const state = {
-  view:'landing',
-  user:null,
-  lastAbsen:null,
-  attendanceCache:[],
-  selectedDate:new Date().toISOString().slice(0,10),
-  adminUser:'admin',
-  adminPass:'admin123',
-  adminTab:'dashboard'
+  view: 'landing',
+  user: null,
+  authToken: sessionStorage.getItem('authToken') || null,
+  authRole: sessionStorage.getItem('authRole') || null,
+  lastAbsen: null,
+  attendanceCache: [],
+  studentsCache: [],
+  selectedDate: new Date().toISOString().slice(0,10),
+  adminTab: 'dashboard',
+  qrToken: null,
+  sessionId: null,
+  expiredAt: null,
+  countdownTimer: null,
+  videoStream: null,
+  scanLoop: null,
+  verifiedStudent: null
 };
 
+/*******************************************************
+ * WRAPPER API — panggil Apps Script via fetch
+ *******************************************************/
+async function callServer(action, params) {
+  try {
+    const res = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: action, params: params || {} }),
+      redirect: 'follow'
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const json = await res.json();
+    return json;
+  } catch (err) {
+    console.error('API error:', err);
+    return { success: false, message: 'Koneksi gagal: ' + err.message };
+  }
+}
+
+/*******************************************************
+ * TOAST
+ *******************************************************/
 function toast(msg, type='success', title=null){
   const c = document.getElementById('toastContainer');
   const el = document.createElement('div');
@@ -347,6 +400,9 @@ function toast(msg, type='success', title=null){
   setTimeout(() => { el.style.transition = 'all .3s'; el.style.opacity = '0'; el.style.transform = 'translateX(40px)'; setTimeout(() => el.remove(), 300); }, 3400);
 }
 
+/*******************************************************
+ * HELPERS
+ *******************************************************/
 function formatTanggal(dateStr){
   if(!dateStr) return '-';
   return new Date(dateStr).toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
@@ -368,8 +424,12 @@ function getGreeting(){
   if(h<18) return 'Selamat sore';
   return 'Selamat malam';
 }
+function esc(str){ return String(str||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
-async function generateQR(container, content, size=180){
+/*******************************************************
+ * QR GENERATOR (client-side)
+ *******************************************************/
+async function generateQR(container, content, size=220){
   container.innerHTML = '<div class="qr-loading"><div class="spinner"></div><span>Membuat QR...</span></div>';
   if(typeof QRCode !== 'undefined' && typeof QRCode.toCanvas === 'function'){
     try{
@@ -383,66 +443,74 @@ async function generateQR(container, content, size=180){
   try{
     const apiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encodeURIComponent(content)}&color=101A33&bgcolor=ffffff&qzone=1`;
     const img = new Image();
-    img.alt = 'QR Code';
-    img.width = size; img.height = size;
-    img.style.borderRadius = '8px';
-    img.style.display = 'block';
+    img.alt = 'QR Code'; img.width = size; img.height = size;
+    img.style.borderRadius = '8px'; img.style.display = 'block';
     await new Promise((resolve, reject) => { img.onload = resolve; img.onerror = reject; img.src = apiUrl; });
     container.innerHTML = '';
     container.appendChild(img);
     return true;
   } catch(err){
-    container.innerHTML = `<div style="text-align:center;padding:20px;color:var(--red)"><i class="fas fa-triangle-exclamation" style="font-size:28px;margin-bottom:10px"></i><p style="font-size:12.5px;font-weight:600">Gagal membuat QR</p><p style="font-size:11.5px;color:var(--muted)">Periksa koneksi internet.</p></div>`;
+    container.innerHTML = `<div style="text-align:center;padding:20px;color:var(--red)"><i class="fas fa-triangle-exclamation" style="font-size:28px;margin-bottom:10px"></i><p style="font-size:12.5px;font-weight:600">Gagal membuat QR</p></div>`;
     return false;
   }
 }
 
+/*******************************************************
+ * ROUTER
+ *******************************************************/
 function render(view){
   state.view = view;
   const app = document.getElementById('app');
   window.scrollTo({top:0,behavior:'smooth'});
+  stopCamera();
+  if(state.countdownTimer){ clearInterval(state.countdownTimer); state.countdownTimer = null; }
+
   switch(view){
     case 'landing':       app.innerHTML = viewLanding(); break;
     case 'student-form':  app.innerHTML = viewStudentForm(); break;
-    case 'student-qr':    app.innerHTML = viewStudentQR(); renderQR(); break;
+    case 'student-scan':  app.innerHTML = viewStudentScan(); startCamera(); break;
+    case 'student-done':  app.innerHTML = viewStudentDone(); break;
     case 'admin-login':   app.innerHTML = viewAdminLogin(); break;
     case 'admin-dash':    app.innerHTML = viewAdminDash(); initAdmin(); break;
   }
 }
 
+/*******************************************************
+ * LANDING
+ *******************************************************/
 function viewLanding(){
   return `
     <nav class="navbar">
       <div class="nav-logo"><div class="logo-mark"><i class="fas fa-qrcode"></i></div><div><h1>Smart Attendance</h1><p>${MATAKULIAH}</p></div></div>
-      <div class="nav-links"><a href="#" onclick="event.preventDefault()">Beranda</a><a href="#" onclick="event.preventDefault()">Fitur</a></div>
+      <div class="nav-links"><a onclick="render('landing')">Beranda</a></div>
     </nav>
     <section class="hero">
       <div class="hero-left">
         <div class="hero-badge"><span class="dot"><i class="fas fa-bolt"></i></span> Sistem Absensi QR</div>
         <h2>Absensi <span class="grad">Rekayasa Perangkat Lunak II</span></h2>
-        <p class="lead">Sistem absensi perkuliahan berbasis QR Code yang cepat, akurat, dan terintegrasi langsung dengan Google Sheets.</p>
+        <p class="lead">Dosen menampilkan satu QR Code unik per pertemuan. Mahasiswa cukup memindai dengan kamera HP setelah verifikasi identitas.</p>
         <div class="hero-cta">
-          <button class="btn btn-primary btn-lg" onclick="startStudent()"><i class="fas fa-qrcode"></i> Isi Absensi</button>
-          <button class="btn btn-outline btn-lg" onclick="startAdmin()"><i class="fas fa-chart-line"></i> Dashboard Admin</button>
+          <button class="btn btn-primary btn-lg" onclick="startStudent()"><i class="fas fa-camera"></i> Scan QR Absensi</button>
+          <button class="btn btn-outline btn-lg" onclick="startAdmin()"><i class="fas fa-chart-line"></i> Dashboard Dosen</button>
         </div>
         <div class="hero-stats">
           <div class="stat-item"><h4>99.9%</h4><p>Akurasi Data</p></div>
           <div class="stat-item"><h4>&lt; 3s</h4><p>Waktu Scan</p></div>
-          <div class="stat-item"><h4>24/7</h4><p>Cloud Sync</p></div>
+          <div class="stat-item"><h4>1 QR</h4><p>Per Pertemuan</p></div>
         </div>
       </div>
       <div class="hero-visual">
         <div class="visual-card main">
-          <div class="visual-head"><div class="dots"><span></span><span></span><span></span></div><div class="visual-title">attendance.portal</div></div>
+          <div class="visual-head"><div class="dots"><span></span><span></span><span></span></div><div class="visual-title">lecturer.screen</div></div>
           <div class="visual-qr"><div class="qr-box"></div></div>
           <div class="visual-info">
-            <div class="row"><span>Nama</span><span>Andi Pratama</span></div>
-            <div class="row"><span>NPM</span><span>2210012345</span></div>
+            <div class="row"><span>Sesi</span><span>SES-20250101</span></div>
+            <div class="row"><span>Berlaku</span><span>30 menit</span></div>
             <div class="row"><span>Mata Kuliah</span><span>RPL II</span></div>
-            <div class="row"><span>Status</span><span style="color:#12B76A">✓ Hadir</span></div>
+            <div class="row"><span>Status</span><span style="color:#12B76A">● Aktif</span></div>
           </div>
         </div>
-        <div class="float-card c1"><div class="fc-icon"><i class="fas fa-check"></i></div><div><h5>Absensi Berhasil</h5><p>Baru saja · 08:15</p></div></div>
+        <div class="float-card c1"><div class="fc-icon"><i class="fas fa-check"></i></div><div><h5>Absensi Masuk</h5><p>Baru saja · 08:15</p></div></div>
         <div class="float-card c2"><div class="fc-icon"><i class="fas fa-users"></i></div><div><h5>128 Mahasiswa</h5><p>Hadir hari ini</p></div></div>
         <div class="float-card c3"><div class="fc-icon"><i class="fas fa-trophy"></i></div><div><h5>98% Kehadiran</h5><p>Pekan ini</p></div></div>
       </div>
@@ -456,22 +524,22 @@ function viewLanding(){
       <div class="role-grid">
         <div class="role-card" data-role="student" onclick="startStudent()">
           <div class="rc-top"><div class="rc-icon"><i class="fas fa-user-graduate"></i></div><div class="rc-tag">Mahasiswa</div></div>
-          <h4>Isi Absensi</h4>
-          <p>Isi data diri dan dapatkan QR Code absensi Anda dalam hitungan detik.</p>
+          <h4>Scan QR Absensi</h4>
+          <p>Verifikasi identitas Anda, lalu pindai QR Code yang ditampilkan dosen di depan kelas.</p>
           <div class="rc-features">
-            <div><i class="fas fa-check"></i> Buat QR unik per absensi</div>
-            <div><i class="fas fa-check"></i> Data langsung tersimpan</div>
+            <div><i class="fas fa-check"></i> Verifikasi NPM & Nama</div>
+            <div><i class="fas fa-check"></i> Scan lewat kamera HP</div>
             <div><i class="fas fa-check"></i> Anti duplikat kehadiran</div>
           </div>
-          <div class="rc-cta">Mulai Absen <i class="fas fa-arrow-right"></i></div>
+          <div class="rc-cta">Mulai Scan <i class="fas fa-arrow-right"></i></div>
         </div>
         <div class="role-card" data-role="admin" onclick="startAdmin()">
-          <div class="rc-top"><div class="rc-icon"><i class="fas fa-chalkboard-teacher"></i></div><div class="rc-tag">Admin / Dosen</div></div>
-          <h4>Kelola & Pantau</h4>
-          <p>Pindai QR mahasiswa dan pantau kehadiran secara real-time.</p>
+          <div class="rc-top"><div class="rc-icon"><i class="fas fa-chalkboard-teacher"></i></div><div class="rc-tag">Dosen / Admin</div></div>
+          <h4>Buat QR & Kelola</h4>
+          <p>Buat satu sesi QR untuk pertemuan hari ini dan pantau kehadiran mahasiswa real-time.</p>
           <div class="rc-features">
-            <div><i class="fas fa-check"></i> Dashboard real-time</div>
-            <div><i class="fas fa-check"></i> Scan QR & validasi otomatis</div>
+            <div><i class="fas fa-check"></i> 1 QR per pertemuan</div>
+            <div><i class="fas fa-check"></i> Auto-expired 30 menit</div>
             <div><i class="fas fa-check"></i> Rekap & filter lengkap</div>
           </div>
           <div class="rc-cta">Masuk Dashboard <i class="fas fa-arrow-right"></i></div>
@@ -481,6 +549,9 @@ function viewLanding(){
   `;
 }
 
+/*******************************************************
+ * STUDENT
+ *******************************************************/
 function startStudent(){ state.user='student'; render('student-form'); }
 
 function viewStudentForm(){
@@ -488,28 +559,32 @@ function viewStudentForm(){
   return `
     <nav class="navbar">
       <div class="nav-logo"><div class="logo-mark"><i class="fas fa-qrcode"></i></div><div><h1>Smart Attendance</h1><p>Portal Mahasiswa</p></div></div>
-      <div class="nav-links"><a href="#" onclick="event.preventDefault();render('landing')"><i class="fas fa-arrow-left"></i> Kembali</a></div>
+      <div class="nav-links"><a onclick="render('landing')"><i class="fas fa-arrow-left"></i> Kembali</a></div>
     </nav>
     <div class="page-shell">
       <div class="stepper">
-        <div class="step active"><span class="num">1</span> Data Mahasiswa</div>
+        <div class="step active"><span class="num">1</span> Verifikasi Identitas</div>
         <div class="step-line"></div>
-        <div class="step"><span class="num">2</span> Generate QR</div>
+        <div class="step"><span class="num">2</span> Scan QR Dosen</div>
         <div class="step-line"></div>
         <div class="step"><span class="num">3</span> Selesai</div>
       </div>
       <div class="form-card">
         <div class="form-card-head">
-          <div class="ic"><i class="fas fa-pen-to-square"></i></div>
-          <div><h3>Form Absensi Mahasiswa</h3><p>${MATAKULIAH}</p></div>
+          <div class="ic"><i class="fas fa-id-card"></i></div>
+          <div><h3>Verifikasi Identitas</h3><p>${MATAKULIAH}</p></div>
         </div>
         <div class="alert alert-error" id="formAlert"><i class="fas fa-circle-exclamation" style="margin-top:2px"></i><span></span></div>
+        <div class="alert alert-info" style="display:flex">
+          <i class="fas fa-circle-info" style="margin-top:2px"></i>
+          <span>Masukkan <strong>NPM</strong> dan <strong>Nama</strong> sesuai KTM. Setelah terverifikasi, Anda dapat memindai QR Code dosen.</span>
+        </div>
         <form onsubmit="submitStudent(event)">
           <div class="field-row">
             <div class="field"><label>NPM <span class="req">*</span></label><div class="input-wrap"><i class="fas fa-id-card pre"></i><input class="input" id="inNpm" placeholder="Contoh: 2210012345" autocomplete="off"></div></div>
             <div class="field"><label>Nama Lengkap <span class="req">*</span></label><div class="input-wrap"><i class="fas fa-user pre"></i><input class="input" id="inNama" placeholder="Nama sesuai KTM" autocomplete="off"></div></div>
           </div>
-          <button type="submit" class="btn btn-primary btn-lg btn-block" id="btnSubmitStudent" style="margin-top:8px"><i class="fas fa-qrcode"></i> Simpan & Buat QR</button>
+          <button type="submit" class="btn btn-primary btn-lg btn-block" id="btnVerify" style="margin-top:8px"><i class="fas fa-shield-halved"></i> Verifikasi Identitas</button>
         </form>
         <div style="margin-top:24px;padding-top:22px;border-top:1px dashed var(--line);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
           <div style="display:flex;gap:10px;align-items:center;font-size:12.5px;color:var(--muted)"><i class="fas fa-calendar-day" style="color:var(--royal-500)"></i> Tanggal: <strong style="color:var(--navy-800)">${formatTanggal(today)}</strong></div>
@@ -520,7 +595,7 @@ function viewStudentForm(){
   `;
 }
 
-async function submitStudent(e){
+function submitStudent(e){
   e.preventDefault();
   const npm = document.getElementById('inNpm').value.trim();
   const nama = document.getElementById('inNama').value.trim();
@@ -531,119 +606,196 @@ async function submitStudent(e){
   if(!nama) return showError('Nama lengkap wajib diisi');
   if(nama.length < 3) return showError('Nama minimal 3 karakter');
   alertBox.classList.remove('show');
-  const btn = document.getElementById('btnSubmitStudent');
+
+  const btn = document.getElementById('btnVerify');
   btn.disabled = true;
-  btn.innerHTML = '<div class="spinner" style="width:16px;height:16px;border-width:2px;margin:0;border-color:rgba(255,255,255,.4);border-top-color:#fff"></div> Menyimpan...';
-  const today = new Date().toISOString().slice(0,10);
-  const waktu = new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
-  const payload = { action:'absen', data:{ npm, nama, matakuliah:MATAKULIAH, tanggal:today, pertemuan:hitungPertemuan(today), waktu, status:'Hadir' } };
-  try{
-    const res = await fetch(API_URL, { method:'POST', body: JSON.stringify(payload), headers:{'Content-Type':'text/plain;charset=utf-8'} });
-    const json = await res.json();
-    if(json.status === 'success'){ toast('QR absensi berhasil dibuat!', 'success', 'Absensi Tercatat'); }
-    else if(json.status === 'duplicate'){
-      btn.disabled = false;
-      btn.innerHTML = '<i class="fas fa-qrcode"></i> Simpan & Buat QR';
-      return showError(json.message || 'Anda sudah absen hari ini');
-    } else { toast(json.message || 'Server error', 'warning'); }
-  } catch(err){
-    console.warn('Offline mode:', err);
-    toast('Mode demo: QR dibuat tanpa simpan', 'warning', 'Offline');
-  }
-  state.lastAbsen = { npm, nama, matakuliah:MATAKULIAH, tanggal:today, pertemuan:hitungPertemuan(today) };
-  btn.disabled = false;
-  btn.innerHTML = '<i class="fas fa-qrcode"></i> Simpan & Buat QR';
-  render('student-qr');
+  btn.innerHTML = '<div class="spinner" style="width:16px;height:16px;border-width:2px;margin:0;border-color:rgba(255,255,255,.4);border-top-color:#fff"></div> Memverifikasi...';
+
+  callServer('verifyStudent', { npm: npm, nama: nama }).then(res => {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-shield-halved"></i> Verifikasi Identitas';
+    if(res.success){
+      state.verifiedStudent = { npm: res.npm, nama: res.nama };
+      toast('Identitas terverifikasi!', 'success', 'Selamat');
+      render('student-scan');
+    } else {
+      showError(res.message || 'Verifikasi gagal');
+    }
+  });
 }
 
-function viewStudentQR(){
-  const d = state.lastAbsen || {};
+function viewStudentScan(){
+  const s = state.verifiedStudent || {};
   return `
     <nav class="navbar">
       <div class="nav-logo"><div class="logo-mark"><i class="fas fa-qrcode"></i></div><div><h1>Smart Attendance</h1><p>Portal Mahasiswa</p></div></div>
-      <div class="nav-links">
-        <a href="#" onclick="event.preventDefault();render('student-form')"><i class="fas fa-rotate-right"></i> Absen Lagi</a>
-        <a href="#" onclick="event.preventDefault();render('landing')"><i class="fas fa-house"></i> Beranda</a>
-      </div>
+      <div class="nav-links"><a onclick="resetStudent()"><i class="fas fa-arrow-left"></i> Kembali</a></div>
     </nav>
-    <div class="page-shell">
-      <div class="stepper" style="margin-top:8px">
-        <div class="step done"><span class="num"><i class="fas fa-check" style="font-size:10px"></i></span> Data Mahasiswa</div>
+    <div class="page-shell" style="max-width:600px">
+      <div class="stepper">
+        <div class="step done"><span class="num"><i class="fas fa-check" style="font-size:10px"></i></span> Verifikasi</div>
         <div class="step-line done"></div>
-        <div class="step done"><span class="num"><i class="fas fa-check" style="font-size:10px"></i></span> Generate QR</div>
-        <div class="step-line done"></div>
-        <div class="step active"><span class="num">3</span> Selesai</div>
+        <div class="step active"><span class="num">2</span> Scan QR Dosen</div>
+        <div class="step-line"></div>
+        <div class="step"><span class="num">3</span> Selesai</div>
       </div>
-      <div class="qr-result" style="margin-top:24px">
-        <div class="qr-ticket">
-          <div class="tick-head"><div class="tick-icon"><i class="fas fa-check"></i></div><div><h3>Absensi Berhasil</h3><p>QR Code siap dipindai oleh Admin</p></div></div>
-          <div class="ticket-info">
-            <div class="trow"><span>NPM</span><span>${d.npm||'-'}</span></div>
-            <div class="trow"><span>Nama</span><span>${d.nama||'-'}</span></div>
-            <div class="trow"><span>Mata Kuliah</span><span>${d.matakuliah||'-'}</span></div>
-            <div class="trow"><span>Tanggal</span><span>${formatTanggalShort(d.tanggal)}</span></div>
-            <div class="trow"><span>Pertemuan</span><span>${d.pertemuan||'-'}</span></div>
-          </div>
-          <div class="qr-holder">
-            <div id="qrcode"></div>
-            <div class="qr-hint"><i class="fas fa-camera"></i> Pindai QR ini menggunakan kamera Admin</div>
+      <div class="form-card" style="padding:28px 24px">
+        <div class="alert alert-success" style="display:flex">
+          <i class="fas fa-circle-check" style="margin-top:2px"></i>
+          <span>Halo <strong>${esc(s.nama)}</strong> (${esc(s.npm)}) — Arahkan kamera ke QR Code di layar dosen.</span>
+        </div>
+        <div class="video-container">
+          <video id="video" autoplay playsinline muted></video>
+          <div class="scan-overlay">
+            <div class="scan-frame">
+              <div class="corner tl"></div><div class="corner tr"></div>
+              <div class="corner bl"></div><div class="corner br"></div>
+              <div class="scan-line"></div>
+            </div>
           </div>
         </div>
-        <div class="qr-side-info">
-          <div class="info-card">
-            <h4><i class="fas fa-circle-info"></i> Petunjuk</h4>
-            <ul>
-              <li><i class="fas fa-check"></i> Tunjukkan QR Code ini ke Admin/Dosen untuk dipindai.</li>
-              <li><i class="fas fa-check"></i> QR Code bersifat unik dan hanya valid untuk absensi ini.</li>
-              <li><i class="fas fa-check"></i> Pastikan layar dalam kondisi terang agar mudah dipindai.</li>
-            </ul>
-          </div>
-          <div class="info-card">
-            <h4><i class="fas fa-shield-halved"></i> Keamanan Data</h4>
-            <p class="small-muted">Data absensi Anda tersimpan aman di Google Sheets dan hanya dapat diakses oleh Admin/Dosen.</p>
-          </div>
-          <div class="info-card" style="background:linear-gradient(135deg,var(--powder-100),#fff);border-color:var(--powder-200)">
-            <h4><i class="fas fa-clock"></i> Absen Lagi?</h4>
-            <p class="small-muted" style="margin-bottom:14px">Anda dapat membuat QR baru jika diperlukan.</p>
-            <button class="btn btn-outline btn-sm btn-block" onclick="render('student-form')"><i class="fas fa-plus"></i> Buat QR Baru</button>
-          </div>
-        </div>
+        <p style="text-align:center;font-size:12.5px;color:var(--muted);margin-top:16px"><i class="fas fa-circle-info"></i> Jika kamera tidak muncul, izinkan akses kamera pada browser Anda.</p>
+        <div class="alert alert-error" id="scanAlert" style="margin-top:16px"><i class="fas fa-circle-exclamation" style="margin-top:2px"></i><span></span></div>
       </div>
     </div>
   `;
 }
 
-async function renderQR(){
-  const d = state.lastAbsen || {};
-  const box = document.getElementById('qrcode');
-  if(!box) return;
-  if(!d.npm || !d.tanggal){ box.innerHTML = '<p style="color:var(--red);font-size:13px;padding:20px;text-align:center">Data tidak lengkap.</p>'; return; }
-  await generateQR(box, JSON.stringify({npm:d.npm, matakuliah:d.matakuliah, tanggal:d.tanggal, t:Date.now()}), 180);
+function startCamera(){
+  const video = document.getElementById('video');
+  if(!video) return;
+  navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+    .then(stream => {
+      state.videoStream = stream;
+      video.srcObject = stream;
+      video.setAttribute('playsinline', true);
+      video.play();
+      requestAnimationFrame(scanTick);
+    })
+    .catch(err => {
+      const a = document.getElementById('scanAlert');
+      if(a){ a.classList.add('show'); a.querySelector('span').textContent = 'Tidak dapat mengakses kamera: ' + err.message; }
+      toast('Kamera tidak dapat diakses', 'error');
+    });
 }
 
-function startAdmin(){ state.user='admin'; render('admin-login'); }
+function scanTick(){
+  const video = document.getElementById('video');
+  if(!video || !state.videoStream) return;
+  if(video.readyState === video.HAVE_ENOUGH_DATA){
+    const canvas = document.createElement('canvas');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    const img = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const code = jsQR(img.data, img.width, img.height);
+    if(code && code.data){
+      stopCamera();
+      handleScanned(code.data);
+      return;
+    }
+  }
+  state.scanLoop = requestAnimationFrame(scanTick);
+}
+
+function stopCamera(){
+  if(state.scanLoop){ cancelAnimationFrame(state.scanLoop); state.scanLoop = null; }
+  if(state.videoStream){
+    state.videoStream.getTracks().forEach(t => t.stop());
+    state.videoStream = null;
+  }
+}
+
+function handleScanned(qrData){
+  toast('QR terdeteksi, memproses...', 'success', 'Berhasil Scan');
+  const s = state.verifiedStudent;
+  callServer('submitAttendance', { qrToken: qrData, npm: s.npm, nama: s.nama }).then(res => {
+    if(res.success){
+      state.lastAbsen = res.data;
+      render('student-done');
+    } else {
+      toast(res.message || 'Absensi gagal', 'error');
+      setTimeout(() => { if(state.view === 'student-scan') startCamera(); }, 1400);
+    }
+  });
+}
+
+function resetStudent(){
+  stopCamera();
+  state.verifiedStudent = null;
+  state.lastAbsen = null;
+  render('student-form');
+}
+
+function viewStudentDone(){
+  const d = state.lastAbsen || {};
+  return `
+    <nav class="navbar">
+      <div class="nav-logo"><div class="logo-mark"><i class="fas fa-qrcode"></i></div><div><h1>Smart Attendance</h1><p>Portal Mahasiswa</p></div></div>
+      <div class="nav-links">
+        <a onclick="resetStudent()"><i class="fas fa-rotate-right"></i> Absen Lagi</a>
+        <a onclick="render('landing')"><i class="fas fa-house"></i> Beranda</a>
+      </div>
+    </nav>
+    <div class="page-shell" style="max-width:720px">
+      <div class="stepper" style="margin-top:8px">
+        <div class="step done"><span class="num"><i class="fas fa-check" style="font-size:10px"></i></span> Verifikasi</div>
+        <div class="step-line done"></div>
+        <div class="step done"><span class="num"><i class="fas fa-check" style="font-size:10px"></i></span> Scan QR</div>
+        <div class="step-line done"></div>
+        <div class="step active"><span class="num">3</span> Selesai</div>
+      </div>
+      <div class="form-card" style="margin-top:24px;text-align:center;padding:48px 32px">
+        <div style="width:96px;height:96px;border-radius:28px;margin:0 auto 20px;background:linear-gradient(135deg,#12B76A,#0E9B58);display:grid;place-items:center;font-size:44px;color:#fff;box-shadow:0 20px 40px -10px rgba(18,183,106,.5)"><i class="fas fa-check"></i></div>
+        <h3 style="font-size:24px;font-weight:800;color:var(--navy-900);margin-bottom:8px">Absensi Berhasil!</h3>
+        <p style="color:var(--muted);font-size:14px;margin-bottom:26px">Kehadiran Anda telah tercatat di sistem.</p>
+        <div style="text-align:left;background:var(--off-white);border:1.5px solid var(--line);border-radius:var(--r-lg);padding:22px;margin-bottom:24px">
+          <div class="trow" style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px dashed var(--line);font-size:13.5px"><span style="color:var(--muted);font-weight:500">NPM</span><span style="font-weight:700;color:var(--navy-900)">${esc(d.npm||'-')}</span></div>
+          <div class="trow" style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px dashed var(--line);font-size:13.5px"><span style="color:var(--muted);font-weight:500">Nama</span><span style="font-weight:700;color:var(--navy-900)">${esc(d.nama||'-')}</span></div>
+          <div class="trow" style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px dashed var(--line);font-size:13.5px"><span style="color:var(--muted);font-weight:500">Mata Kuliah</span><span style="font-weight:700;color:var(--navy-900)">${esc(d.matakuliah||MATAKULIAH)}</span></div>
+          <div class="trow" style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px dashed var(--line);font-size:13.5px"><span style="color:var(--muted);font-weight:500">Waktu</span><span style="font-weight:700;color:var(--navy-900)">${esc(d.waktu||'-')}</span></div>
+          <div class="trow" style="display:flex;justify-content:space-between;padding:10px 0;font-size:13.5px"><span style="color:var(--muted);font-weight:500">Sesi</span><span style="font-weight:700;color:var(--navy-900)">${esc(d.sessionId||'-')}</span></div>
+        </div>
+        <button class="btn btn-primary btn-block" onclick="resetStudent()"><i class="fas fa-rotate-right"></i> Absen Lagi</button>
+      </div>
+    </div>
+  `;
+}
+
+/*******************************************************
+ * ADMIN
+ *******************************************************/
+function startAdmin(){
+  if(state.authToken){
+    render('admin-dash');
+  } else {
+    state.user = 'admin';
+    render('admin-login');
+  }
+}
 
 function viewAdminLogin(){
   return `
     <nav class="navbar">
-      <div class="nav-logo"><div class="logo-mark"><i class="fas fa-qrcode"></i></div><div><h1>Smart Attendance</h1><p>Portal Admin</p></div></div>
-      <div class="nav-links"><a href="#" onclick="event.preventDefault();render('landing')"><i class="fas fa-arrow-left"></i> Kembali</a></div>
+      <div class="nav-logo"><div class="logo-mark"><i class="fas fa-qrcode"></i></div><div><h1>Smart Attendance</h1><p>Portal Dosen / Admin</p></div></div>
+      <div class="nav-links"><a onclick="render('landing')"><i class="fas fa-arrow-left"></i> Kembali</a></div>
     </nav>
     <div class="page-shell" style="max-width:480px">
       <div class="form-card">
         <div class="form-card-head">
           <div class="ic" style="background:linear-gradient(135deg,var(--gold-500),#B8934E);color:#2A1F00"><i class="fas fa-user-shield"></i></div>
-          <div><h3>Login Admin</h3><p>Masuk untuk mengelola absensi</p></div>
+          <div><h3>Login Dosen / Admin</h3><p>Masuk untuk mengelola absensi</p></div>
         </div>
         <div class="alert alert-error" id="loginAlert"><i class="fas fa-circle-exclamation" style="margin-top:2px"></i><span></span></div>
         <form onsubmit="submitAdminLogin(event)">
           <div class="field"><label>Username</label><div class="input-wrap"><i class="fas fa-user-shield pre"></i><input class="input" id="inAdminUser" placeholder="admin" value="admin"></div></div>
           <div class="field"><label>Password</label><div class="input-wrap"><i class="fas fa-key pre"></i><input class="input" type="password" id="inAdminPass" placeholder="••••••" value="admin123"></div></div>
-          <button type="submit" class="btn btn-navy btn-lg btn-block" style="margin-top:8px"><i class="fas fa-right-to-bracket"></i> Masuk Dashboard</button>
+          <button type="submit" class="btn btn-navy btn-lg btn-block" style="margin-top:8px" id="btnLogin"><i class="fas fa-right-to-bracket"></i> Masuk Dashboard</button>
         </form>
         <div style="margin-top:22px;padding:14px 16px;background:var(--powder-100);border-radius:var(--r-md);font-size:12.5px;color:var(--navy-700);display:flex;gap:10px;align-items:flex-start">
           <i class="fas fa-circle-info" style="color:var(--royal-500);margin-top:2px"></i>
-          <span><strong>Demo:</strong> admin / admin123</span>
+          <span><strong>Default:</strong> admin / admin123 &nbsp;·&nbsp; dosen / dosen123</span>
         </div>
       </div>
     </div>
@@ -655,40 +807,59 @@ function submitAdminLogin(e){
   const u = document.getElementById('inAdminUser').value.trim();
   const p = document.getElementById('inAdminPass').value.trim();
   const alertBox = document.getElementById('loginAlert');
-  if(u === state.adminUser && p === state.adminPass){
-    toast('Selamat datang, Admin!', 'success', 'Login Berhasil');
-    render('admin-dash');
-  } else {
+  const btn = document.getElementById('btnLogin');
+  if(!u || !p){
     alertBox.classList.add('show');
-    alertBox.querySelector('span').textContent = 'Username atau password salah';
-    toast('Kredensial tidak valid', 'error');
+    alertBox.querySelector('span').textContent = 'Username dan password wajib diisi';
+    return;
   }
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner" style="width:16px;height:16px;border-width:2px;margin:0;border-color:rgba(255,255,255,.4);border-top-color:#fff"></div> Memeriksa...';
+
+  callServer('checkLogin', { username: u, password: p }).then(res => {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-right-to-bracket"></i> Masuk Dashboard';
+    if(res.success){
+      state.authToken = res.token;
+      state.authRole = res.role;
+      sessionStorage.setItem('authToken', res.token);
+      sessionStorage.setItem('authRole', res.role);
+      toast('Selamat datang!', 'success', 'Login Berhasil');
+      render('admin-dash');
+    } else {
+      alertBox.classList.add('show');
+      alertBox.querySelector('span').textContent = res.message || 'Login gagal';
+      toast(res.message || 'Kredensial tidak valid', 'error');
+    }
+  });
 }
 
 function viewAdminDash(){
   const today = new Date().toISOString().slice(0,10);
+  const role = (state.authRole || 'admin').toUpperCase();
   return `
     <div class="admin-layout">
       <aside class="sidebar">
-        <div class="sb-logo"><div class="mark"><i class="fas fa-qrcode"></i></div><div><h1>Smart Attendance</h1><p>Admin Panel</p></div></div>
+        <div class="sb-logo"><div class="mark"><i class="fas fa-qrcode"></i></div><div><h1>Smart Attendance</h1><p>Panel ${role}</p></div></div>
         <nav class="sb-menu">
           <div class="sb-item active" data-tab="dashboard" onclick="switchTab('dashboard')"><i class="fas fa-chart-pie"></i> Dashboard</div>
           <div class="sb-item" data-tab="kehadiran" onclick="switchTab('kehadiran')"><i class="fas fa-list-check"></i> Data Kehadiran</div>
+          <div class="sb-item" data-tab="mahasiswa" onclick="switchTab('mahasiswa')"><i class="fas fa-users"></i> Mahasiswa</div>
         </nav>
         <div class="sb-footer">
-          <div class="sb-user"><div class="avatar">AD</div><div><h5>Administrator</h5><p>Dosen Pengampu</p></div></div>
-          <button class="sb-logout" onclick="goLanding()"><i class="fas fa-right-from-bracket"></i> Logout</button>
+          <div class="sb-user"><div class="avatar">${role.slice(0,2)}</div><div><h5>${role}</h5><p>${role==='ADMIN'?'Administrator':'Dosen Pengampu'}</p></div></div>
+          <button class="sb-logout" onclick="doLogout()"><i class="fas fa-right-from-bracket"></i> Logout</button>
         </div>
       </aside>
       <main class="admin-main">
         <div class="admin-topbar">
           <div class="admin-greeting">
-            <h2>${getGreeting()}, <span>Admin</span> 👋</h2>
+            <h2>${getGreeting()}, <span>${role}</span> 👋</h2>
             <p><i class="fas fa-calendar-day"></i> ${formatTanggal(today)}</p>
           </div>
           <div class="admin-actions">
             <button class="btn btn-outline btn-sm" onclick="loadAttendance()"><i class="fas fa-rotate"></i> Refresh</button>
-            <button class="btn btn-primary btn-sm" onclick="document.getElementById('scanInput')?.focus()"><i class="fas fa-qrcode"></i> Scan QR</button>
+            <button class="btn btn-primary btn-sm" onclick="switchTab('dashboard')"><i class="fas fa-qrcode"></i> Sesi QR</button>
           </div>
         </div>
         <div id="tabContent"></div>
@@ -708,14 +879,17 @@ function renderTabContent(){
   if(!el) return;
   if(state.adminTab === 'dashboard') el.innerHTML = viewDashboardTab();
   else if(state.adminTab === 'kehadiran') el.innerHTML = viewKehadiranTab();
-  setTimeout(() => loadAttendance(), 100);
+  else if(state.adminTab === 'mahasiswa') el.innerHTML = viewMahasiswaTab();
+  if(state.adminTab === 'dashboard'){ setTimeout(() => initDashboard(), 50); loadAttendance(); }
+  else if(state.adminTab === 'kehadiran') loadAttendance();
+  else if(state.adminTab === 'mahasiswa') loadStudents();
 }
 
 function bannerHTML(){
   return `
     <div class="banner-panel">
       <div class="banner-left">
-        <div class="banner-badge"><span class="pd"></span> SIAP MENERIMA SCAN</div>
+        <div class="banner-badge"><span class="pd"></span> SIAP DIPINDAI MAHASISWA</div>
         <h3>${MATAKULIAH}</h3>
         <div style="font-size:13.5px;opacity:.85;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
           <i class="fas fa-calendar"></i> ${formatTanggal(state.selectedDate)}
@@ -728,9 +902,7 @@ function bannerHTML(){
 }
 
 function viewDashboardTab(){
-  const hadir = state.attendanceCache.filter(a => (a['Status']||a.status)==='Hadir' || (a['Status']||a.status)==='Terlambat').length;
-  const total = state.attendanceCache.length || 0;
-  const belum = Math.max(0, total - hadir);
+  const hadir = state.attendanceCache.length;
   return `
     <div class="summary-grid">
       <div class="summary-card sc-1">
@@ -739,11 +911,11 @@ function viewDashboardTab(){
       </div>
       <div class="summary-card sc-2">
         <div class="sc-head"><div class="sc-ic"><i class="fas fa-user-clock"></i></div></div>
-        <div class="sc-lbl">Belum Hadir</div><div class="sc-val" id="dashBelum">${belum}</div><div class="sc-sub">Menunggu kehadiran</div>
+        <div class="sc-lbl">Belum Hadir</div><div class="sc-val" id="dashBelum">0</div><div class="sc-sub">Menunggu scan QR</div>
       </div>
       <div class="summary-card sc-3">
-        <div class="sc-head"><div class="sc-ic"><i class="fas fa-users"></i></div></div>
-        <div class="sc-lbl">Total Mahasiswa</div><div class="sc-val" id="dashTotal">${total}</div><div class="sc-sub">Terdaftar hari ini</div>
+        <div class="sc-head"><div class="sc-ic"><i class="fas fa-qrcode"></i></div></div>
+        <div class="sc-lbl">Status Sesi</div><div class="sc-val" id="dashSesi" style="font-size:18px">—</div><div class="sc-sub">QR hari ini</div>
       </div>
     </div>
     ${bannerHTML()}
@@ -756,18 +928,15 @@ function viewDashboardTab(){
         </div>
       </div>
       <div class="tool-card">
-        <h4><i class="fas fa-qrcode"></i> Scan QR Kehadiran</h4>
-        <div class="scan-bar">
-          <i class="fas fa-camera scan-ic"></i>
-          <input id="scanInput" placeholder="Scan / ketik NPM mahasiswa..." autocomplete="off" onkeypress="if(event.key==='Enter')processScan()">
-          <button class="btn btn-primary btn-sm" onclick="processScan()"><i class="fas fa-check"></i> Proses</button>
-        </div>
+        <h4><i class="fas fa-qrcode"></i> Sesi QR Hari Ini</h4>
+        <button class="btn btn-primary btn-block" onclick="createNewSession()" id="btnCreateSession"><i class="fas fa-plus"></i> Buat Sesi QR Baru</button>
         <div style="margin-top:14px;padding:12px 14px;background:var(--powder-100);border-radius:var(--r-md);font-size:12px;color:var(--navy-700);display:flex;gap:9px;align-items:flex-start">
           <i class="fas fa-circle-info" style="color:var(--royal-500);margin-top:2px"></i>
-          <span>Scan QR atau ketik NPM lalu tekan <strong>Enter</strong> untuk mencatat kehadiran.</span>
+          <span>Satu QR untuk satu pertemuan. Mahasiswa memindai QR ini dari HP masing-masing.</span>
         </div>
       </div>
     </div>
+    <div class="qr-result" id="qrResult" style="margin-bottom:26px"></div>
     ${renderTableCard()}
   `;
 }
@@ -784,13 +953,52 @@ function viewKehadiranTab(){
       </div>
       <div class="tool-card">
         <h4><i class="fas fa-magnifying-glass"></i> Cari Mahasiswa</h4>
-        <div class="scan-bar">
-          <i class="fas fa-search scan-ic"></i>
-          <input id="searchInput" placeholder="Cari nama atau NPM..." autocomplete="off" oninput="filterTable()">
-        </div>
+        <div class="input-wrap"><i class="fas fa-search pre"></i><input class="input" id="searchInput" placeholder="Cari nama atau NPM..." autocomplete="off" oninput="filterTable()"></div>
       </div>
     </div>
     ${renderTableCard()}
+  `;
+}
+
+function viewMahasiswaTab(){
+  return `
+    <div class="toolbar">
+      <div class="tool-card">
+        <h4><i class="fas fa-user-plus"></i> Tambah Mahasiswa</h4>
+        <div class="field">
+          <label>NPM</label>
+          <div class="input-wrap"><i class="fas fa-id-card pre"></i><input class="input" id="addNpm" placeholder="NPM mahasiswa"></div>
+        </div>
+        <div class="field">
+          <label>Nama Lengkap</label>
+          <div class="input-wrap"><i class="fas fa-user pre"></i><input class="input" id="addNama" placeholder="Nama sesuai KTM"></div>
+        </div>
+        <button class="btn btn-primary btn-block" onclick="addNewStudent()"><i class="fas fa-plus"></i> Tambahkan Mahasiswa</button>
+        <div class="alert alert-error" id="addAlert" style="margin-top:14px"><i class="fas fa-circle-exclamation" style="margin-top:2px"></i><span></span></div>
+      </div>
+      <div class="tool-card">
+        <h4><i class="fas fa-users"></i> Total Mahasiswa</h4>
+        <div class="summary-card" style="border:none;padding:0">
+          <div class="sc-lbl">Terdaftar</div>
+          <div class="sc-val" id="totalStudents">0</div>
+          <div class="sc-sub">Mahasiswa siap absen</div>
+        </div>
+      </div>
+    </div>
+    <div class="table-card">
+      <div class="table-head">
+        <h4><i class="fas fa-users"></i> Daftar Mahasiswa</h4>
+        <span class="count-pill" id="studentsCount">0 Mahasiswa</span>
+      </div>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th style="width:50px">No</th><th>NPM</th><th>Nama</th></tr></thead>
+          <tbody id="studentsBody">
+            <tr><td colspan="3"><div class="skeleton"><div class="spinner"></div><p style="font-size:13px;color:var(--muted)">Memuat data...</p></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   `;
 }
 
@@ -815,22 +1023,120 @@ function renderTableCard(){
 
 function initAdmin(){ renderTabContent(); }
 
-async function loadAttendance(){
+function initDashboard(){
+  callServer('getActiveSession', {}).then(res => {
+    if(res.success){
+      renderSessionQR(res.qrToken, res.sessionId, res.expiredAt);
+    } else {
+      const el = document.getElementById('dashSesi');
+      if(el) el.textContent = 'Belum Aktif';
+    }
+  });
+}
+
+function createNewSession(){
+  const btn = document.getElementById('btnCreateSession');
+  if(btn){ btn.disabled = true; btn.innerHTML = '<div class="spinner" style="width:16px;height:16px;border-width:2px;margin:0;border-color:rgba(255,255,255,.4);border-top-color:#fff"></div> Membuat...'; }
+
+  callServer('createSession', { token: state.authToken }).then(res => {
+    if(btn){ btn.disabled = false; btn.innerHTML = '<i class="fas fa-plus"></i> Buat Sesi QR Baru'; }
+    if(res.success){
+      renderSessionQR(res.qrToken, res.sessionId, res.expiredAt);
+      toast('Sesi QR berhasil dibuat!', 'success');
+    } else {
+      toast(res.message || 'Gagal membuat sesi', 'error');
+    }
+  });
+}
+
+async function renderSessionQR(qrToken, sessionId, expiredAt){
+  state.qrToken = qrToken;
+  state.sessionId = sessionId;
+  state.expiredAt = expiredAt;
+  const el = document.getElementById('qrResult');
+  if(!el) return;
+  el.innerHTML = `
+    <div class="qr-ticket">
+      <div class="tick-head"><div class="tick-icon"><i class="fas fa-qrcode"></i></div><div><h3>Sesi QR Aktif</h3><p>${MATAKULIAH}</p></div></div>
+      <div class="ticket-info">
+        <div class="trow"><span>Session ID</span><span>${esc(sessionId)}</span></div>
+        <div class="trow"><span>Berlaku s/d</span><span>${new Date(expiredAt).toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'})}</span></div>
+        <div class="trow"><span>Pertemuan</span><span>${hitungPertemuan(state.selectedDate)}</span></div>
+      </div>
+      <div class="qr-holder">
+        <div id="qrcode"></div>
+        <div class="qr-hint"><i class="fas fa-expand"></i> Tampilkan QR ini di layar kelas</div>
+      </div>
+    </div>
+    <div class="qr-side-info">
+      <div class="info-card">
+        <h4><i class="fas fa-clock"></i> Hitung Mundur</h4>
+        <div id="countdown" style="font-size:28px;font-weight:800;color:var(--navy-800);font-family:'Poppins',sans-serif">--:--</div>
+        <p class="small-muted" style="margin-top:6px">QR otomatis kedaluwarsa setelah 30 menit.</p>
+      </div>
+      <div class="info-card">
+        <h4><i class="fas fa-circle-info"></i> Petunjuk</h4>
+        <ul>
+          <li><i class="fas fa-check"></i> Tampilkan QR ini di proyektor/layar kelas.</li>
+          <li><i class="fas fa-check"></i> Mahasiswa memindai lewat HP masing-masing.</li>
+          <li><i class="fas fa-check"></i> Hanya 1 QR per pertemuan — mahasiswa tidak bisa absen 2x.</li>
+        </ul>
+      </div>
+      <button class="btn btn-danger btn-block" onclick="closeCurrentSession()" id="btnCloseSession"><i class="fas fa-stop"></i> Tutup Sesi Sekarang</button>
+    </div>
+  `;
+  const box = document.getElementById('qrcode');
+  await generateQR(box, qrToken, 220);
+  startCountdown(new Date(expiredAt));
+}
+
+function startCountdown(expiredAt){
+  if(state.countdownTimer) clearInterval(state.countdownTimer);
+  const el = document.getElementById('countdown');
+  if(!el) return;
+  function tick(){
+    const diff = Math.max(0, Math.floor((expiredAt - new Date()) / 1000));
+    const m = String(Math.floor(diff / 60)).padStart(2,'0');
+    const s = String(diff % 60).padStart(2,'0');
+    el.textContent = m + ':' + s;
+    if(diff === 0){
+      clearInterval(state.countdownTimer);
+      state.countdownTimer = null;
+      el.textContent = 'Kedaluwarsa';
+      el.style.color = 'var(--red)';
+    }
+  }
+  tick();
+  state.countdownTimer = setInterval(tick, 1000);
+}
+
+function closeCurrentSession(){
+  if(!state.sessionId){ toast('Tidak ada sesi aktif', 'warning'); return; }
+  if(!confirm('Tutup sesi QR sekarang? Mahasiswa tidak akan bisa absen lagi.')) return;
+  callServer('closeSession', { token: state.authToken, sessionId: state.sessionId }).then(res => {
+    if(res.success){
+      toast('Sesi ditutup.', 'success');
+      const el = document.getElementById('qrResult');
+      if(el) el.innerHTML = '';
+      state.qrToken = null; state.sessionId = null;
+      if(state.countdownTimer){ clearInterval(state.countdownTimer); state.countdownTimer = null; }
+      const sesiEl = document.getElementById('dashSesi');
+      if(sesiEl) sesiEl.textContent = 'Belum Aktif';
+    } else toast(res.message || 'Gagal menutup sesi', 'error');
+  });
+}
+
+function loadAttendance(){
   const tgl = document.getElementById('filterTanggal')?.value || state.selectedDate;
   state.selectedDate = tgl;
   const tbody = document.getElementById('tableBody');
   if(tbody) tbody.innerHTML = `<tr><td colspan="6"><div class="skeleton"><div class="spinner"></div><p style="font-size:13px;color:var(--muted)">Memuat data...</p></div></td></tr>`;
-  try{
-    const res = await fetch(`${API_URL}?action=getRekap&tanggal=${encodeURIComponent(tgl)}`);
-    const json = await res.json();
-    if(json.status === 'success'){ state.attendanceCache = json.data || []; }
+  callServer('getAttendanceList', { token: state.authToken, sessionId: null }).then(res => {
+    if(res.success) state.attendanceCache = res.data || [];
     else state.attendanceCache = [];
-  }catch(e){
-    console.error('Rekap error:', e);
-    state.attendanceCache = [];
-  }
-  renderTable();
-  updateSummary();
+    renderTable();
+    updateSummary();
+  });
 }
 
 function renderTable(){
@@ -840,22 +1146,21 @@ function renderTable(){
   const countEl = document.getElementById('tableCount');
   if(countEl) countEl.textContent = data.length + ' Mahasiswa';
   if(data.length === 0){
-    tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><div class="es-icon"><i class="fas fa-inbox"></i></div><h4>Belum Ada Kehadiran</h4><p>Belum ada mahasiswa yang tercatat hadir pada <strong>${formatTanggalShort(state.selectedDate)}</strong>.</p><button class="btn btn-primary btn-sm" onclick="document.getElementById('scanInput')?.focus()"><i class="fas fa-qrcode"></i> Scan QR Mahasiswa</button></div></td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><div class="es-icon"><i class="fas fa-inbox"></i></div><h4>Belum Ada Kehadiran</h4><p>Belum ada mahasiswa yang tercatat hadir pada <strong>${formatTanggalShort(state.selectedDate)}</strong>.</p></div></td></tr>`;
     return;
   }
   const avatarClasses = ['','a2','a3','a4'];
   tbody.innerHTML = data.map((item, i) => {
-    const nama = item['Nama'] || item.nama || '-';
-    const npm = item['NPM'] || item.npm || '-';
-    const mk = item['Mata Kuliah'] || item.matakuliah || '-';
-    const waktu = item['Waktu'] || item.waktu || '-';
-    const status = item['Status'] || item.status || 'Hadir';
+    const nama = item.nama || '-';
+    const npm = item.npm || '-';
+    const mk = item.matakuliah || MATAKULIAH;
+    const waktu = item.timestamp || item.waktu || '-';
+    const status = item.status || 'VALID';
     const av = avatarClasses[i % 4];
-    let badge = '';
-    if(status === 'Hadir') badge = '<span class="badge badge-hadir"><i class="fas fa-circle"></i> Hadir</span>';
-    else if(status === 'Terlambat') badge = '<span class="badge badge-telat"><i class="fas fa-circle"></i> Terlambat</span>';
-    else badge = '<span class="badge badge-absen"><i class="fas fa-circle"></i> Belum Hadir</span>';
-    return `<tr><td>${i+1}</td><td><div class="avatar-cell"><div class="avatar ${av}">${initialOf(nama)}</div><div class="name">${nama}</div></div></td><td><strong style="color:var(--navy-900)">${npm}</strong></td><td>${mk}</td><td>${waktu}</td><td>${badge}</td></tr>`;
+    let badge = '<span class="badge badge-hadir"><i class="fas fa-circle"></i> Hadir</span>';
+    if(status === 'DUPLICATE') badge = '<span class="badge badge-telat"><i class="fas fa-circle"></i> Duplikat</span>';
+    else if(status === 'INVALID') badge = '<span class="badge badge-absen"><i class="fas fa-circle"></i> Invalid</span>';
+    return `<tr><td>${i+1}</td><td><div class="avatar-cell"><div class="avatar ${av}">${initialOf(nama)}</div><div class="name">${esc(nama)}</div></div></td><td><strong style="color:var(--navy-900)">${esc(npm)}</strong></td><td>${esc(mk)}</td><td>${esc(waktu)}</td><td>${badge}</td></tr>`;
   }).join('');
 }
 
@@ -867,13 +1172,12 @@ function filterTable(){
 }
 
 function updateSummary(){
-  const hadir = state.attendanceCache.filter(a => (a['Status']||a.status)==='Hadir' || (a['Status']||a.status)==='Terlambat').length;
   const total = state.attendanceCache.length;
-  const belum = Math.max(0, total - hadir);
   const setEl = (id, v) => { const el = document.getElementById(id); if(el) el.textContent = v; };
-  setEl('dashHadir', hadir);
-  setEl('dashBelum', belum);
-  setEl('dashTotal', total);
+  setEl('dashHadir', total);
+  setEl('dashBelum', 0);
+  const sesiEl = document.getElementById('dashSesi');
+  if(sesiEl) sesiEl.textContent = state.sessionId ? 'Aktif' : 'Belum Aktif';
 }
 
 function onFilterChange(){
@@ -881,36 +1185,72 @@ function onFilterChange(){
   loadAttendance();
 }
 
-async function processScan(){
-  const input = document.getElementById('scanInput');
-  const npm = input.value.trim();
-  if(!npm){ toast('Masukkan NPM', 'warning'); input.focus(); return; }
-  const tgl = document.getElementById('filterTanggal')?.value || state.selectedDate;
-
-  input.disabled = true;
-  try{
-    const res = await fetch(API_URL, {
-      method:'POST',
-      headers:{'Content-Type':'text/plain;charset=utf-8'},
-      body: JSON.stringify({action:'scanQR', npm, tanggal:tgl})
-    });
-    const json = await res.json();
-    console.log('📥 Scan:', json);
-    if(json.status === 'success'){ toast(json.message, 'success'); input.value = ''; await loadAttendance(); }
-    else if(json.status === 'duplicate'){ toast(json.message, 'warning'); input.value = ''; }
-    else { toast(json.message, 'error'); }
-  }catch(e){
-    console.error('Scan error:', e);
-    toast('Error: ' + e.message, 'error');
-  } finally {
-    input.disabled = false;
-    input.focus();
-  }
+function loadStudents(){
+  const tbody = document.getElementById('studentsBody');
+  if(tbody) tbody.innerHTML = `<tr><td colspan="3"><div class="skeleton"><div class="spinner"></div><p style="font-size:13px;color:var(--muted)">Memuat data...</p></div></td></tr>`;
+  callServer('getAllStudents', { token: state.authToken }).then(res => {
+    if(res.success) state.studentsCache = res.data || [];
+    else state.studentsCache = [];
+    renderStudents();
+  });
 }
 
-function goLanding(){ state.user = null; render('landing'); }
+function renderStudents(){
+  const tbody = document.getElementById('studentsBody');
+  if(!tbody) return;
+  const data = state.studentsCache || [];
+  const countEl = document.getElementById('studentsCount');
+  const totalEl = document.getElementById('totalStudents');
+  if(countEl) countEl.textContent = data.length + ' Mahasiswa';
+  if(totalEl) totalEl.textContent = data.length;
+  if(data.length === 0){
+    tbody.innerHTML = `<tr><td colspan="3"><div class="empty-state"><div class="es-icon"><i class="fas fa-users"></i></div><h4>Belum Ada Mahasiswa</h4><p>Tambahkan mahasiswa melalui form di atas agar mereka dapat melakukan absensi.</p></div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = data.map((s,i) => `<tr><td>${i+1}</td><td><strong style="color:var(--navy-900)">${esc(s.npm)}</strong></td><td>${esc(s.nama)}</td></tr>`).join('');
+}
 
-document.addEventListener('DOMContentLoaded', () => { render('landing'); });
+function addNewStudent(){
+  const npm = document.getElementById('addNpm').value.trim();
+  const nama = document.getElementById('addNama').value.trim();
+  const alertBox = document.getElementById('addAlert');
+  const showError = (msg) => { alertBox.classList.add('show'); alertBox.querySelector('span').textContent = msg; toast(msg,'error'); };
+  if(!npm) return showError('NPM wajib diisi');
+  if(!nama) return showError('Nama wajib diisi');
+  alertBox.classList.remove('show');
+  callServer('addStudent', { token: state.authToken, npm: npm, nama: nama }).then(res => {
+    if(res.success){
+      document.getElementById('addNpm').value = '';
+      document.getElementById('addNama').value = '';
+      toast('Mahasiswa ditambahkan!', 'success');
+      loadStudents();
+    } else showError(res.message || 'Gagal menambahkan');
+  });
+}
+
+function doLogout(){
+  const token = state.authToken;
+  callServer('logout', { token: token }).then(() => {
+    state.authToken = null; state.authRole = null;
+    sessionStorage.removeItem('authToken');
+    sessionStorage.removeItem('authRole');
+    toast('Anda telah logout', 'success');
+    render('landing');
+  });
+}
+
+/*******************************************************
+ * BOOT
+ *******************************************************/
+document.addEventListener('DOMContentLoaded', () => {
+  if(SERVER_PAGE === 'student'){ state.user='student'; render('student-form'); }
+  else if(SERVER_PAGE === 'login'){ state.user='admin'; render('admin-login'); }
+  else if(SERVER_PAGE === 'lecturer'){
+    if(state.authToken){ state.user='admin'; render('admin-dash'); }
+    else { window.location.href = '?page=login'; }
+  }
+  else { render('landing'); }
+});
 </script>
 </body>
 </html>
